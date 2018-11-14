@@ -2,57 +2,46 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/showForecastView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Controller.MainActivity">
+    tools:context=".Controller.ShowForecastListActivity">
 
     <TextView
-        android:id="@+id/infoViewTime"
+        android:id="@+id/coordTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="72dp"
         android:layout_marginTop="16dp"
-        android:text="@string/infoViewTimeString"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputYCoordView" />
-
-    <Button
-        android:id="@+id/buttonNextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:text="@string/buttonNextTextView"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/inputXCoordView"
+    <Button
+        android:id="@+id/startServiceButtonView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="Enter X coord"
-        android:inputType="numberDecimal"
+        android:text="Button"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonNextView" />
+        app:layout_constraintTop_toBottomOf="@+id/ServiceTextView"
+        tools:text="@string/startServiceButtonViewText" />
 
-    <EditText
-        android:id="@+id/inputYCoordView"
+    <TextView
+        android:id="@+id/ServiceTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="Enter Y Coord"
-        android:inputType="numberDecimal"
+        android:layout_marginTop="172dp"
+        android:text="@string/startServiceViewText"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputXCoordView" />
-
+        app:layout_constraintTop_toBottomOf="@+id/coordTextView" />
 </android.support.constraint.ConstraintLayout>

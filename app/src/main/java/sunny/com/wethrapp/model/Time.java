@@ -16,6 +16,10 @@ public class Time {
     @ColumnInfo(name = "time")
     private int time;
 
+    public Time(int time) {
+        this.time = time;
+    }
+
     public int getTimeId() {
         return timeId;
     }
@@ -29,10 +33,6 @@ public class Time {
     }
 
     public void setTime(int time) {
-        this.time = time;
-    }
-
-    public Time(int time) {
         this.time = time;
     }
 }

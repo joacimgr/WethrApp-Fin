@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">WethrApp</string>
     <string name="infoViewTimeString">hej</string>
+    <string name="buttonNextTextView">Show Forecast</string>
+    <string name="startServiceButtonViewText">Start Service!</string>
+    <string name="startServiceViewText">---</string>
 </resources>
