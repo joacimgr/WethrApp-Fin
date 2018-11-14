@@ -6,6 +6,11 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
+import sunny.com.wethrapp.model.DB.entity.CloudCoverage;
+import sunny.com.wethrapp.model.DB.entity.Temperature;
+import sunny.com.wethrapp.model.DB.entity.Time;
+import sunny.com.wethrapp.model.DB.entity.WeatherCategory;
+
 @Database(entities = {Time.class, Temperature.class, WeatherCategory.class, CloudCoverage.class}, version = 1, exportSchema = false)
 public abstract class WeatherDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "WETHERDB";

@@ -8,18 +8,20 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import sunny.com.wethrapp.R;
-import sunny.com.wethrapp.model.ResourceService;
+import sunny.com.wethrapp.model.WeatherDatabase;
 
 public class ShowForecastListActivity extends AppCompatActivity {
 
-    TextView coordTextView;
-    Button serviceButton;
+    TextView coordTextView, serviceTextView;
+    Button serviceButton, updateButton;
+
+    private int tempNumber = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_forecast_list);
-        coordTextView = findViewById(R.id.coordTextView);
+        initElements();
 
         String message = "- : -";
         String value = null;
@@ -32,14 +34,34 @@ public class ShowForecastListActivity extends AppCompatActivity {
         }
         coordTextView.setText(message);
 
-        serviceButton = findViewById(R.id.startServiceButtonView);
         serviceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ResourceService.class);
-                intent.putExtra("coordX",  "200");
+                tempNumber++;
+                intent.putExtra("tempNumber", tempNumber);
                 startService(intent);
             }
         });
+
+        updateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String temperature = String.valueOf(WeatherDatabase
+                        .getInstance(getApplicationContext())
+                        .daoAccess()
+                        .fetchAllTemp(tempNumber+8)
+                        .getTemperature());
+                serviceTextView.setText(temperature);
+            }
+        });
+    }
+
+    private void initElements(){
+        coordTextView = findViewById(R.id.coordTextView);
+        serviceButton = findViewById(R.id.startServiceButtonView);
+        updateButton = findViewById(R.id.updateServiceButton);
+        serviceTextView = findViewById(R.id.serviceTextView);
     }
 }

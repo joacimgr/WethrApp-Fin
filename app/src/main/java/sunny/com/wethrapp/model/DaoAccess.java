@@ -1,9 +1,13 @@
 package sunny.com.wethrapp.model;
 
 import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+
+import sunny.com.wethrapp.model.DB.entity.CloudCoverage;
+import sunny.com.wethrapp.model.DB.entity.Temperature;
+import sunny.com.wethrapp.model.DB.entity.Time;
+import sunny.com.wethrapp.model.DB.entity.WeatherCategory;
 
 @Dao
 public interface DaoAccess {
@@ -15,6 +19,9 @@ public interface DaoAccess {
 
     @Insert
     void insertTemperature (Temperature temperature);
+
+    @Query("SELECT * FROM temperature Where tempId = :tempId LIMIT 1")
+    Temperature fetchAllTemp(int tempId);
 
     @Insert
     void insertWeatherCategory (WeatherCategory weatherCategory);

@@ -1,6 +1,5 @@
 package sunny.com.wethrapp.Controller;
 
-import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,8 +10,7 @@ import android.widget.TextView;
 
 
 import sunny.com.wethrapp.R;
-import sunny.com.wethrapp.model.ResourceService;
-import sunny.com.wethrapp.model.Time;
+import sunny.com.wethrapp.model.DB.entity.Time;
 import sunny.com.wethrapp.model.WeatherDatabase;
 
 public class MainActivity extends AppCompatActivity {

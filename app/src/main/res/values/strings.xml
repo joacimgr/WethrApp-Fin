@@ -4,4 +4,7 @@
     <string name="buttonNextTextView">Show Forecast</string>
     <string name="startServiceButtonViewText">Start Service!</string>
     <string name="startServiceViewText">---</string>
+    <string name="UpdateServiceText">Update</string>
+    <string name="textDef">---</string>
+    <string name="destroyServiceButtonTextView">end Service</string>
 </resources>

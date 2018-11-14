@@ -1,4 +1,4 @@
-package sunny.com.wethrapp.model;
+package sunny.com.wethrapp.model.DB.entity;
 
 
 import android.arch.persistence.room.ColumnInfo;

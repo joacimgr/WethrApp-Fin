@@ -21,7 +21,7 @@
         <activity android:name=".Controller.ShowForecastListActivity" />
 
         <service
-            android:name=".model.ResourceService"
+            android:name=".Controller.ResourceService"
             android:enabled="true"
             android:exported="true" />
     </application>
