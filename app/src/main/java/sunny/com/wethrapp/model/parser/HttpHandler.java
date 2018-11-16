@@ -21,48 +21,49 @@ public class HttpHandler {
     /**
      * Constructor empty
      */
-    public HttpHandler() {}
+    public HttpHandler() {
+    }
 
     /**
      * This method will att
+     *
      * @return
      */
-    private ForcastInstance makeCall(){
+    public ForcastInstance makeCall(WeatherDatabase dBinstance) {
         ForcastInstance forcastInstance = new ForcastInstance();
-        BufferedReader  in = null;
+        BufferedReader in = null;
         try {
             URL url = new URL(URL_DEF);
             URLConnection urlConnection = url.openConnection();
 
             in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 
-            ForcastValues values = new ForcastValues();
-            ArrayList<ForcastValues> valuesArrayList = new ArrayList<>();
             Gson gson = new Gson();
-            ConverterObjects.Response response = gson.fromJson(in, ConverterObjects.Response.class);
-            int i = 0;
-            for (ConverterObjects.TimeSeries timeSeries: response.getTimeSeries()) {
-                for (ConverterObjects.Parameter parameter: timeSeries.getParameter()) {
-                    values.setLevel(parameter.getLevel());
-                    values.setName(parameter.getName());
-                    values.setUnit(parameter.getUnit());
-                    values.setValue(parameter.getValues()[0]);
+            Response response = gson.fromJson(in, Response.class);
+            forcastInstance.setSearchTime(response.getApprovedTime());
+            dBinstance.daoAccess().insertFCInstance(forcastInstance);
+            dBinstance.daoAccess().getForCastInstanceById();
+            
+            //TODO create temp, cc, time instances to add to list of pojos.
+            for(int i = 0; i < response.getTimeSeries().size() ; i++){
+                for(int j = 0; j < response.getTimeSeries().get(j).getParameters().size(); j++){
+                    if (response.getTimeSeries().get(j).getParameters().get(j).getName().equals("t")) {
+                        Response.TimeSeriesBean.ParametersBean pbean = response.getTimeSeries().get(j).getParameters().get(j);
+                        //TODO CREATE POJO FOR TRANSFER TO DB
+                    }
                 }
-                valuesArrayList.add(values);
             }
-            Double[] coords = null;
-            coords = response.getGeometry().getCoordinates()[0].getCoorinates();
-            forcastInstance.setValues(valuesArrayList);
-            forcastInstance.setCoorinates(coords);
-            forcastInstance.setApprovedTime(response.getApprovedTime());
+
+
+            forcastInstance.setSearchTime(response.getApprovedTime());
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if(in != null){
-                try{
+            if (in != null) {
+                try {
                     in.close();
                 } catch (IOException e) {
                     e.printStackTrace();

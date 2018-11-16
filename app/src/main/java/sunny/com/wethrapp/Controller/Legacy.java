@@ -11,7 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class HttpHandler {
+public class Legacy {
 
     private String makeRequest(String urlAddress)   {
         HttpURLConnection http = null;

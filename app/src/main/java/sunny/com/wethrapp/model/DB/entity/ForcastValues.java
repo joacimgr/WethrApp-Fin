@@ -1,8 +1,15 @@
 package sunny.com.wethrapp.model.DB.entity;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
-@Entity
+@Entity(
+        foreignKeys = {@ForeignKey(entity = ForcastInstance.class,
+        parentColumns = "id",
+        childColumns = "instanceId")},
+        indices = {@Index(value = {"instanceId"})}
+        )
 public class ForcastValues {
 
     @PrimaryKey(autoGenerate = true)
@@ -12,8 +19,14 @@ public class ForcastValues {
     private int level;
     private String unit;
     private int value;
+    private int instanceId;
 
-    public ForcastValues() {
+    public int getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(int instanceId) {
+        this.instanceId = instanceId;
     }
 
     public ForcastValues(String name, int level, String unit, int value) {

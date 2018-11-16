@@ -10,7 +10,7 @@ import android.content.Context;
 import sunny.com.wethrapp.model.DB.entity.ForcastInstance;
 import sunny.com.wethrapp.model.DB.entity.ForcastValues;
 
-@Database(entities = {ForcastInstance.class, ForcastValues.class}, version = 2, exportSchema = false)
+@Database(entities = {ForcastInstance.class, ForcastValues.class}, version = 3, exportSchema = false)
 public abstract class WeatherDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "WETHERDB.db";
     private static WeatherDatabase dBinstance;

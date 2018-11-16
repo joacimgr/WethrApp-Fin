@@ -1,6 +1,5 @@
 package sunny.com.wethrapp.Controller;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,11 +8,13 @@ import android.widget.TextView;
 
 import sunny.com.wethrapp.R;
 import sunny.com.wethrapp.model.WeatherDatabase;
+import sunny.com.wethrapp.model.parser.HttpHandler;
 
 public class ShowForecastListActivity extends AppCompatActivity {
 
     TextView coordTextView, serviceTextView;
     Button serviceButton, updateButton;
+    String responseText;
 
     private int tempNumber = 1;
 
@@ -22,7 +23,7 @@ public class ShowForecastListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_forecast_list);
         initElements();
-
+        responseText = "";
         String message = "- : -";
         String value = null;
         String value2 = null;
@@ -37,25 +38,29 @@ public class ShowForecastListActivity extends AppCompatActivity {
         serviceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), ResourceService.class);
-                tempNumber++;
-                intent.putExtra("tempNumber", tempNumber);
-                startService(intent);
+                new Thread(new Runnable(){
+                    @Override
+                    public void run() {
+                        HttpHandler httpHandler = new HttpHandler();
+                        responseText = httpHandler.makeCall(WeatherDatabase.getInstance(getApplicationContext())).getSearchTime();
+                    }
+                }).start();
             }
         });
 
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                serviceTextView.setText(responseText);
             }
         });
+
     }
 
     private void initElements(){
         coordTextView = findViewById(R.id.coordTextView);
         serviceButton = findViewById(R.id.startServiceButtonView);
-        updateButton = findViewById(R.id.updateServiceButton);
         serviceTextView = findViewById(R.id.serviceTextView);
+        updateButton = findViewById(R.id.setTextForcastView);
     }
 }

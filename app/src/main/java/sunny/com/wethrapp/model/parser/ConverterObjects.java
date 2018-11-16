@@ -58,17 +58,8 @@ public class ConverterObjects {
     }
 
     public class Geometry {
-        private int geoId;
         private String type;
         private Coordinates[] coordinates;
-
-        public int getGeoId() {
-            return geoId;
-        }
-
-        public void setGeoId(int geoId) {
-            this.geoId = geoId;
-        }
 
         public String getType() {
             return type;
@@ -87,10 +78,8 @@ public class ConverterObjects {
         }
 
         public Geometry(int geoId, String type, Coordinates[] coordinates) {
-            this.geoId = geoId;
             this.type = type;
             this.coordinates = coordinates;
-
         }
     }
 
@@ -121,17 +110,17 @@ public class ConverterObjects {
     }
 
     public class Coordinates {
-        private Double[] coorinates;
+        private double[] coorinates;
 
-        public Double[] getCoorinates() {
+        public double[] getCoorinates() {
             return coorinates;
         }
 
-        public void setCoorinates(Double[] coorinates) {
+        public void setCoorinates(double[] coorinates) {
             this.coorinates = coorinates;
         }
 
-        public Coordinates(Double[] coorinates) {
+        public Coordinates(double[] coorinates) {
             this.coorinates = coorinates;
         }
     }

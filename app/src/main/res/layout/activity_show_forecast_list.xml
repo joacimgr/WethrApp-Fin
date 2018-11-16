@@ -24,14 +24,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="8dp"
         android:text="Button"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/serviceTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ServiceTextView"
+        app:layout_constraintTop_toBottomOf="@+id/setTextForcastView"
         tools:text="@string/startServiceButtonViewText" />
 
     <TextView
@@ -56,5 +56,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="@string/textDef" />
+
+    <Button
+        android:id="@+id/setTextForcastView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="setText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ServiceTextView" />
 
 </android.support.constraint.ConstraintLayout>
