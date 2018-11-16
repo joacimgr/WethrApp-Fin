@@ -4,16 +4,15 @@ package sunny.com.wethrapp.model;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
-import sunny.com.wethrapp.model.DB.entity.CloudCoverage;
-import sunny.com.wethrapp.model.DB.entity.Temperature;
-import sunny.com.wethrapp.model.DB.entity.Time;
-import sunny.com.wethrapp.model.DB.entity.WeatherCategory;
+import sunny.com.wethrapp.model.DB.entity.ForcastInstance;
+import sunny.com.wethrapp.model.DB.entity.ForcastValues;
 
-@Database(entities = {Time.class, Temperature.class, WeatherCategory.class, CloudCoverage.class}, version = 1, exportSchema = false)
+@Database(entities = {ForcastInstance.class, ForcastValues.class}, version = 2, exportSchema = false)
 public abstract class WeatherDatabase extends RoomDatabase {
-    private static final String DATABASE_NAME = "WETHERDB";
+    private static final String DATABASE_NAME = "WETHERDB.db";
     private static WeatherDatabase dBinstance;
 
     public abstract DaoAccess daoAccess();

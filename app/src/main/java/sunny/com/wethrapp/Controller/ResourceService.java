@@ -4,11 +4,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import sunny.com.wethrapp.model.DB.entity.Temperature;
 import sunny.com.wethrapp.model.WeatherDatabase;
 
 public class ResourceService extends Service {
     WeatherDatabase wdb;
+    private static final String url = "https://maceo.sth.kth.se/api/category/pmp3g/version/2/geotype/point/lon/14.333/lat/60.383/";
 
     public ResourceService() {
     }
@@ -21,10 +21,7 @@ public class ResourceService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        WeatherDatabase wdb = WeatherDatabase.getInstance(getApplicationContext());
-        int tempNumber = intent.getIntExtra("tempNumber", 0);
-        Temperature temp = new Temperature(tempNumber);
-        wdb.daoAccess().insertTemperature(temp);
+
         return START_STICKY;
     }
 
@@ -32,4 +29,11 @@ public class ResourceService extends Service {
     public void onDestroy() {
         super.onDestroy();
     }
+
+
+
+
+
+
+
 }

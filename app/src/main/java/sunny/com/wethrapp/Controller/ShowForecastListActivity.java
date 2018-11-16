@@ -48,12 +48,6 @@ public class ShowForecastListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String temperature = String.valueOf(WeatherDatabase
-                        .getInstance(getApplicationContext())
-                        .daoAccess()
-                        .fetchAllTemp(tempNumber+8)
-                        .getTemperature());
-                serviceTextView.setText(temperature);
             }
         });
     }
