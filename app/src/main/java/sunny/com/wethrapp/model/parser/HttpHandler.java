@@ -8,10 +8,12 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.List;
 
-import sunny.com.wethrapp.model.DB.entity.ForcastInstance;
-import sunny.com.wethrapp.model.DB.entity.ForcastValues;
+import sunny.com.wethrapp.model.DB.entity.ForecastInstance;
+import sunny.com.wethrapp.model.DB.entity.TimeSeriesInstance;
 import sunny.com.wethrapp.model.WeatherDatabase;
 
 public class HttpHandler {
@@ -29,8 +31,8 @@ public class HttpHandler {
      *
      * @return
      */
-    public ForcastInstance makeCall(WeatherDatabase dBinstance) {
-        ForcastInstance forcastInstance = new ForcastInstance();
+    public ForecastInstance makeCall(WeatherDatabase dBinstance) {
+        ForecastInstance forecastInstance = new ForecastInstance();
         BufferedReader in = null;
         try {
             URL url = new URL(URL_DEF);
@@ -40,23 +42,29 @@ public class HttpHandler {
 
             Gson gson = new Gson();
             Response response = gson.fromJson(in, Response.class);
-            forcastInstance.setSearchTime(response.getApprovedTime());
-            dBinstance.daoAccess().insertFCInstance(forcastInstance);
-            dBinstance.daoAccess().getForCastInstanceById();
-            
+            forecastInstance.setSearchTime(response.getApprovedTime());
+            dBinstance.daoAccess().insertFCInstance(forecastInstance);
+            int fCId = dBinstance.daoAccess().getAllForcasts().getId();
+            TimeSeriesInstance timeSeriesInstance = new TimeSeriesInstance();
+            List<TimeSeriesInstance> timeSeriesInstances = new ArrayList<>();
+
             //TODO create temp, cc, time instances to add to list of pojos.
-            for(int i = 0; i < response.getTimeSeries().size() ; i++){
-                for(int j = 0; j < response.getTimeSeries().get(j).getParameters().size(); j++){
-                    if (response.getTimeSeries().get(j).getParameters().get(j).getName().equals("t")) {
-                        Response.TimeSeriesBean.ParametersBean pbean = response.getTimeSeries().get(j).getParameters().get(j);
+            for (int i = 0; i < response.getTimeSeries().size(); i++) {
+                timeSeriesInstance.setTimeForValues(response.getTimeSeries().get(i).getValidTime());
+                for (int j = 0; j < response.getTimeSeries().get(j).getParameters().size(); j++) {
+                    String name = response.getTimeSeries().get(j).getParameters().get(j).getName();
+                    if (name.equals("t")) {
+                        timeSeriesInstance.setTemperature(response.getTimeSeries().get(j).getParameters().get(j).getValues().get(0));
                         //TODO CREATE POJO FOR TRANSFER TO DB
+                    } else if(name.equals("tcc_mean")){
+                        timeSeriesInstance.setCloudCoverage(response.getTimeSeries().get(j).getParameters().get(j).getValues().get(0));
                     }
                 }
+                timeSeriesInstances.add(timeSeriesInstance);
             }
-
-
-            forcastInstance.setSearchTime(response.getApprovedTime());
-
+            forecastInstance.setTimeSeriesInstances(timeSeriesInstances);
+            forecastInstance.setSearchTime(response.getApprovedTime());
+            return forecastInstance;
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -70,6 +78,6 @@ public class HttpHandler {
                 }
             }
         }
-        return forcastInstance;
+        return forecastInstance;
     }
 }

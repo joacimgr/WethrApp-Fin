@@ -57,7 +57,7 @@ public class Legacy {
     }
 
     /*private JSONObject convertStringToJsonObj (String response){
-        *//*ForcastInstance forcastInstance = new ForcastInstance();
+        *//*ForecastInstance forcastInstance = new ForecastInstance();
         if(response != null){
             try{
                 Gson gson = new Gson();

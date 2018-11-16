@@ -4,20 +4,16 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
-import java.util.List;
-
-import sunny.com.wethrapp.model.DB.entity.ForcastInstance;
-import sunny.com.wethrapp.model.DB.entity.ForcastValues;
+import sunny.com.wethrapp.model.DB.entity.ForecastInstance;
 
 @Dao
 public interface DaoAccess {
 
     @Insert
-    void insertFCInstance(ForcastInstance forcastInstanc);
+    void insertFCInstance(ForecastInstance forcastInstance);
 
-    @Query("SELECT * FROM forcastinstance LIMIT 1")
-    ForcastInstance getForCastInstanceById();
-
+    @Query("SELECT * FROM forecast_table LIMIT 1")
+    ForecastInstance getAllForcasts();
 
 
 }

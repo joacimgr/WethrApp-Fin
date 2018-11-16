@@ -1,3 +1,4 @@
+/*
 package sunny.com.wethrapp.model.parser;
 
 public class ConverterObjects {
@@ -183,3 +184,4 @@ public class ConverterObjects {
         private int[] values;
     }
 }
+*/
