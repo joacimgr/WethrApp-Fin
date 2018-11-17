@@ -27,7 +27,8 @@ public class HttpHandler {
     }
 
     /**
-     * This method will att
+     * This method will attempt to make a REST call to
+     * smhi's API with lat and long
      *
      * @return
      */
@@ -38,13 +39,9 @@ public class HttpHandler {
         try {
             URL url = new URL(URL_DEF);
             URLConnection urlConnection = url.openConnection();
-
             in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-
             Gson gson = new Gson();
             response = gson.fromJson(in, Response.class);
-
-
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {

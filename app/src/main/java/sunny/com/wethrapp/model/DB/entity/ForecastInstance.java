@@ -5,8 +5,11 @@ import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.Relation;
+import android.arch.persistence.room.TypeConverters;
 
+import java.util.Date;
 import java.util.List;
+
 
 @Entity(tableName = "forecast_table")
 public class ForecastInstance {
@@ -16,7 +19,29 @@ public class ForecastInstance {
     private int id;
 
     @ColumnInfo(name = "search_time")
-    private String searchTime;
+    private Date searchTime;
+
+    @ColumnInfo(name = "latitude")
+    private double latitude;
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    @ColumnInfo(name = "longitude")
+    private double longitude;
 
     public ForecastInstance() {}
 
@@ -28,11 +53,11 @@ public class ForecastInstance {
         this.id = id;
     }
 
-    public String getSearchTime() {
+    public Date getSearchTime() {
         return searchTime;
     }
 
-    public void setSearchTime(String searchTime) {
+    public void setSearchTime(Date searchTime) {
         this.searchTime = searchTime;
     }
 

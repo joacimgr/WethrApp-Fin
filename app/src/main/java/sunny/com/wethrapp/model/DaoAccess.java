@@ -1,5 +1,6 @@
 package sunny.com.wethrapp.model;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
@@ -13,14 +14,21 @@ import sunny.com.wethrapp.model.DB.entity.TimeSeriesInstance;
 public interface DaoAccess {
 
     @Insert
-    void insertFCInstance(ForecastInstance forcastInstance);
+    void insertFCInstance(ForecastInstance forecastInstance);
 
     @Insert
-    void insertAllTimeseries(List<TimeSeriesInstance> timeSeriesInstances);
+    void insertAllTimeSeries(List<TimeSeriesInstance> timeSeriesInstances);
+
+    @Insert
+    void insertOneTimeSeries(TimeSeriesInstance instance);
 
     @Query("SELECT * FROM forecast_table LIMIT 1")
-    ForecastInstance getAllForcasts();
+    ForecastInstance getForcast();
 
     @Query("SELECT * FROM timeseries_table")
-    List<TimeSeriesInstance> getAllTimeseries();
+    LiveData<List<TimeSeriesInstance>> getAllTimeSeries();
+
+    @Query("DELETE FROM timeseries_table")
+    void deleteAllFromTimeseries();
+
 }

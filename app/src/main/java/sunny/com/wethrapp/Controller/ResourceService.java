@@ -55,9 +55,9 @@ public class ResourceService extends Service {
     }
 
     private void insertIntoDatabase(Response response){
-
+/*
         dBinstance.daoAccess().insertFCInstance(forecastInstance);
-        int fCId = dBinstance.daoAccess().getAllForcasts().getId();
+        int fCId = dBinstance.daoAccess().getForcast().getId();
         forecastInstance.setSearchTime(response.getApprovedTime());
 
         for (int i = 0; i < response.getTimeSeries().size(); i++) {
@@ -75,7 +75,7 @@ public class ResourceService extends Service {
             timeSeriesInstances.add(timeSeriesInstance);
         }
         forecastInstance.setSearchTime(response.getApprovedTime());
-        dBinstance.daoAccess().insertAllTimeseries(timeSeriesInstances);
+        dBinstance.daoAccess().insertAllTimeSeries(timeSeriesInstances);*/
 
     }
 

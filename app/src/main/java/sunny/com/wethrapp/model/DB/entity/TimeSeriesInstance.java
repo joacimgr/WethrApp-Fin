@@ -2,6 +2,7 @@ package sunny.com.wethrapp.model.DB.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -13,14 +14,6 @@ public class TimeSeriesInstance {
     @PrimaryKey(autoGenerate = true)
     private int instance_id;
 
-    public int getInstance_id() {
-        return instance_id;
-    }
-
-    public void setInstance_id(int instance_id) {
-        this.instance_id = instance_id;
-    }
-
 
     @ColumnInfo(name = "time")
     private String timeForValues;
@@ -31,6 +24,13 @@ public class TimeSeriesInstance {
     @ColumnInfo(name = "cloud_coverage")
     private double cloudCoverage;
 
+    public int getInstance_id() {
+        return instance_id;
+    }
+
+    public void setInstance_id(int instance_id) {
+        this.instance_id = instance_id;
+    }
 
     public String getTimeForValues() {
         return timeForValues;
@@ -42,6 +42,16 @@ public class TimeSeriesInstance {
 
     public double getTemperature() {
         return temperature;
+    }
+
+    public TimeSeriesInstance() {
+    }
+
+    @Ignore
+    public TimeSeriesInstance(String timeForValues, double temperature, double cloudCoverage) {
+        this.timeForValues = timeForValues;
+        this.temperature = temperature;
+        this.cloudCoverage = cloudCoverage;
     }
 
     public void setTemperature(double temperature) {
