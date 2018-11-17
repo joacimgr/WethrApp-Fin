@@ -31,9 +31,10 @@ public class HttpHandler {
      *
      * @return
      */
-    public ForecastInstance makeCall(WeatherDatabase dBinstance) {
+    public Response makeCall(WeatherDatabase dBinstance) {
         ForecastInstance forecastInstance = new ForecastInstance();
         BufferedReader in = null;
+        Response response = null;
         try {
             URL url = new URL(URL_DEF);
             URLConnection urlConnection = url.openConnection();
@@ -41,30 +42,9 @@ public class HttpHandler {
             in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 
             Gson gson = new Gson();
-            Response response = gson.fromJson(in, Response.class);
-            forecastInstance.setSearchTime(response.getApprovedTime());
-            dBinstance.daoAccess().insertFCInstance(forecastInstance);
-            int fCId = dBinstance.daoAccess().getAllForcasts().getId();
-            TimeSeriesInstance timeSeriesInstance = new TimeSeriesInstance();
-            List<TimeSeriesInstance> timeSeriesInstances = new ArrayList<>();
+            response = gson.fromJson(in, Response.class);
 
-            //TODO create temp, cc, time instances to add to list of pojos.
-            for (int i = 0; i < response.getTimeSeries().size(); i++) {
-                timeSeriesInstance.setTimeForValues(response.getTimeSeries().get(i).getValidTime());
-                for (int j = 0; j < response.getTimeSeries().get(j).getParameters().size(); j++) {
-                    String name = response.getTimeSeries().get(j).getParameters().get(j).getName();
-                    if (name.equals("t")) {
-                        timeSeriesInstance.setTemperature(response.getTimeSeries().get(j).getParameters().get(j).getValues().get(0));
-                        //TODO CREATE POJO FOR TRANSFER TO DB
-                    } else if(name.equals("tcc_mean")){
-                        timeSeriesInstance.setCloudCoverage(response.getTimeSeries().get(j).getParameters().get(j).getValues().get(0));
-                    }
-                }
-                timeSeriesInstances.add(timeSeriesInstance);
-            }
-            forecastInstance.setTimeSeriesInstances(timeSeriesInstances);
-            forecastInstance.setSearchTime(response.getApprovedTime());
-            return forecastInstance;
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -78,6 +58,6 @@ public class HttpHandler {
                 }
             }
         }
-        return forecastInstance;
+        return response;
     }
 }

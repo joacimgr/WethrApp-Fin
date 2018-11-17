@@ -18,9 +18,6 @@ public class ForecastInstance {
     @ColumnInfo(name = "search_time")
     private String searchTime;
 
-    @Embedded
-    private List<TimeSeriesInstance> timeSeriesInstances;
-
     public ForecastInstance() {}
 
     public int getId() {
@@ -39,11 +36,4 @@ public class ForecastInstance {
         this.searchTime = searchTime;
     }
 
-    public List<TimeSeriesInstance> getTimeSeriesInstances() {
-        return timeSeriesInstances;
-    }
-
-    public void setTimeSeriesInstances(List<TimeSeriesInstance> timeSeriesInstances) {
-        this.timeSeriesInstances = timeSeriesInstances;
-    }
 }

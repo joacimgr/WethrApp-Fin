@@ -1,11 +1,28 @@
 package sunny.com.wethrapp.model.DB.entity;
 
 import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 
-
+@Entity(tableName = "timeseries_table")
 public class TimeSeriesInstance {
 
+
+    @ColumnInfo(name = "forecast_id")
+    private int instance_id;
+
+    public int getInstance_id() {
+        return instance_id;
+    }
+
+    public void setInstance_id(int instance_id) {
+        this.instance_id = instance_id;
+    }
+
+    @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "time")
     private String timeForValues;
 
