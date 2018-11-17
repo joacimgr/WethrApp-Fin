@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sunny.com.wethrapp.R;
+import sunny.com.wethrapp.model.DB.entity.ForecastInstance;
 import sunny.com.wethrapp.model.DB.entity.TimeSeriesInstance;
 import sunny.com.wethrapp.model.WeatherDatabase;
 import sunny.com.wethrapp.model.parser.HttpHandler;
@@ -43,12 +44,17 @@ public class ShowForecastListActivity extends AppCompatActivity {
         serviceButton.setOnClickListener(view -> new Thread(() -> {
             HttpHandler httpHandler = new HttpHandler();
             response = httpHandler.makeCall(WeatherDatabase.getInstance(getApplicationContext()));
-            startService(new Intent(getApplicationContext(), ResourceService.class));
+            //startService(new Intent(getApplicationContext(), ResourceService.class));
+            insertIntoDatabase(response);
         }).start());
 
         updateButton.setOnClickListener(view -> {
             new Thread(() -> responseText = (ArrayList<TimeSeriesInstance>) WeatherDatabase.getInstance(getApplicationContext()).daoAccess().getAllTimeseries());
-            serviceTextView.setText(responseText.get(0).getTimeForValues());
+            StringBuffer sb = new StringBuffer();
+            for(TimeSeriesInstance timeSeriesInstance : responseText){
+                sb.append(timeSeriesInstance.getTimeForValues() + "\n");
+            }
+            serviceTextView.setText(sb.toString());
         });
 
     }
@@ -58,5 +64,35 @@ public class ShowForecastListActivity extends AppCompatActivity {
         serviceButton = findViewById(R.id.startServiceButtonView);
         serviceTextView = findViewById(R.id.serviceTextView);
         updateButton = findViewById(R.id.setTextForcastView);
+    }
+
+    private void insertIntoDatabase(Response response){
+        ForecastInstance forecastInstance = new ForecastInstance();
+        TimeSeriesInstance timeSeriesInstance = new TimeSeriesInstance();
+        ArrayList<TimeSeriesInstance> timeSeriesInstances = new ArrayList<>();
+        WeatherDatabase dBinstance = WeatherDatabase.getInstance(getApplicationContext());
+        forecastInstance.setSearchTime(response.getApprovedTime());
+        dBinstance.daoAccess().insertFCInstance(forecastInstance);
+        int fCId = dBinstance.daoAccess().getAllForcasts().getId();
+        forecastInstance.setSearchTime(response.getApprovedTime());
+        String name = "";
+        Response.TimeSeriesBean.ParametersBean parametersBean;
+        for (int i = 0; i < response.getTimeSeries().size(); i++) {
+            //Add time of measure
+            timeSeriesInstance.setTimeForValues(response.getTimeSeries().get(i).getValidTime());
+            for (int j = 0; j < response.getTimeSeries().get(i).getParameters().size(); j++) {
+                parametersBean = response.getTimeSeries().get(i).getParameters().get(j);
+                name = response.getTimeSeries().get(i).getParameters().get(j).getName();
+                if (name.equals("t")) { // temperature
+                    timeSeriesInstance.setTemperature(parametersBean.getValues().get(0));
+                } else if(name.equals("tcc_mean")){ // cc
+                    timeSeriesInstance.setCloudCoverage(parametersBean.getValues().get(0));
+                }
+            }
+            timeSeriesInstances.add(timeSeriesInstance);
+            timeSeriesInstance = new TimeSeriesInstance();
+        }
+        dBinstance.daoAccess().insertAllTimeseries(timeSeriesInstances);
+
     }
 }

@@ -9,8 +9,8 @@ import android.support.annotation.NonNull;
 @Entity(tableName = "timeseries_table")
 public class TimeSeriesInstance {
 
-
     @ColumnInfo(name = "forecast_id")
+    @PrimaryKey(autoGenerate = true)
     private int instance_id;
 
     public int getInstance_id() {
@@ -21,8 +21,7 @@ public class TimeSeriesInstance {
         this.instance_id = instance_id;
     }
 
-    @PrimaryKey
-    @NonNull
+
     @ColumnInfo(name = "time")
     private String timeForValues;
 
