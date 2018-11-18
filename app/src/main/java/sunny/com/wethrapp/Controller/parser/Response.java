@@ -1,4 +1,4 @@
-package sunny.com.wethrapp.model.parser;
+package sunny.com.wethrapp.Controller.parser;
 
 import java.util.List;
 

@@ -1,4 +1,7 @@
-package sunny.com.wethrapp.model.parser;
+package sunny.com.wethrapp.Controller.parser;
+
+import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -8,17 +11,14 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.List;
 
 import sunny.com.wethrapp.model.DB.entity.ForecastInstance;
-import sunny.com.wethrapp.model.DB.entity.TimeSeriesInstance;
+import sunny.com.wethrapp.model.DaoAccess;
 import sunny.com.wethrapp.model.WeatherDatabase;
 
 public class HttpHandler {
 
-    private static final String URL_DEF = "https://maceo.sth.kth.se/api/category/pmp3g/version/2/geotype/point/lon/14.333/lat/60.383/";
+    private static final String URL_DEF = "https://maceo.sth.kth.se/api/category/pmp3g/version/2/geotype/point/lon/%/lat/¤/";
 
     /**
      * Constructor empty
@@ -32,12 +32,12 @@ public class HttpHandler {
      *
      * @return
      */
-    public Response makeCall(WeatherDatabase dBinstance) {
-        ForecastInstance forecastInstance = new ForecastInstance();
+    public Response makeCall(String lon, String lat) {
         BufferedReader in = null;
         Response response = null;
+        String completeUrl = replaceLatLonOnURL(lat, lon);
         try {
-            URL url = new URL(URL_DEF);
+            URL url = new URL(completeUrl);
             URLConnection urlConnection = url.openConnection();
             in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             Gson gson = new Gson();
@@ -56,5 +56,13 @@ public class HttpHandler {
             }
         }
         return response;
+    }
+
+    private String replaceLatLonOnURL(String lat, String lon){
+        String returnString = URL_DEF;
+        returnString = returnString.replace("%", lon);
+        returnString = returnString.replace("¤", lat);
+        Log.d("replaceresult", returnString);
+        return returnString;
     }
 }
