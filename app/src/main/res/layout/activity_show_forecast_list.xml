@@ -5,66 +5,16 @@
     android:id="@+id/showForecastView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Controller.ShowForecastListActivity">
+    tools:context=".RecyclerView">
 
-    <TextView
-        android:id="@+id/coordTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="72dp"
-        android:layout_marginTop="16dp"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/startServiceButtonView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycle_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginTop="8dp"
-        android:text="@string/startServiceButtonViewText"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/serviceTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/setTextForcastView" />
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        tools:listitem="@layout/item_view">
 
-    <TextView
-        android:id="@+id/ServiceTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="172dp"
-        android:text="@string/startServiceViewText"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/coordTextView" />
-
-    <TextView
-        android:id="@+id/serviceTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:text="@string/textDef" />
-
-    <Button
-        android:id="@+id/setTextForcastView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="setText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ServiceTextView" />
-
+    </android.support.v7.widget.RecyclerView>
 </android.support.constraint.ConstraintLayout>

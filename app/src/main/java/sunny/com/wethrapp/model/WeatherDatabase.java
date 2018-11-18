@@ -16,7 +16,9 @@ import sunny.com.wethrapp.model.DB.entity.Converters;
 import sunny.com.wethrapp.model.DB.entity.ForecastInstance;
 import sunny.com.wethrapp.model.DB.entity.TimeSeriesInstance;
 
-@Database(entities = {ForecastInstance.class, TimeSeriesInstance.class}, version = 1, exportSchema = false)
+import static sunny.com.wethrapp.model.DB.entity.Converters.fromStringToDate;
+
+@Database(entities = {ForecastInstance.class, TimeSeriesInstance.class}, version = 2, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class WeatherDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "WETHERDB.db";
@@ -54,9 +56,10 @@ public abstract class WeatherDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(Converters.fromStringToDate("2018-11-17T14:00Z"), 22.1, 5));
-            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(Converters.fromStringToDate("2018-11-17T14:00Z"), 15, 2));
-            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(Converters.fromStringToDate("2018-11-17T14:00Z"), 16, 1));
+            ;
+            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(fromStringToDate("2018-11-17T14:00Z"), 22.1, 5));
+            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(fromStringToDate("2018-11-17T15:00Z"), 15, 2));
+            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(fromStringToDate("2018-11-17T17:00Z"), 16, 1));
             return null;
         }
     }

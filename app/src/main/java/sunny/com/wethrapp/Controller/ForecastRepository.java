@@ -22,7 +22,7 @@ public class ForecastRepository {
     private DaoAccess forecastDao;
     private List<TimeSeriesInstance> allForecasts;
     private Response response;
-
+    private static final String TAG = "LogAppTest";
     public ForecastRepository (Application application, Response response){
         WeatherDatabase weatherDatabase = WeatherDatabase.getInstance(application);
         forecastDao = weatherDatabase.daoAccess();
@@ -30,12 +30,9 @@ public class ForecastRepository {
         this.response = response;
     }
 
-    /**
-     *
-     */
-    public void updateForcasts(){
+    /*public void updateForcasts(){
         new updateAllForcastsAsynkTask(forecastDao, response).execute();
-    }
+    }*/
 
     /**
      *
@@ -69,20 +66,16 @@ public class ForecastRepository {
         }
     }
 
-    private void insertIntoDatabase(Response response){
 
-    }
-
-    private static class updateAllForcastsAsynkTask extends AsyncTask<Response, Void, Void>{
+    /*private static class updateAllForcastsAsynkTask extends AsyncTask<Response, Void, Void>{
         private DaoAccess forecastDao;
         private ForecastInstance forecast;
         private Response response;
-        private HttpHandler httpHandler;
+
 
         public updateAllForcastsAsynkTask(DaoAccess forecastDao, Response response) {
             this.forecastDao = forecastDao;
             this.response = response;
-            this.httpHandler = new HttpHandler();
         }
 
         @Override
@@ -101,16 +94,16 @@ public class ForecastRepository {
                 double latitude = response.getGeometry().getCoordinates().get(0).get(1);
                 forecastInstance.setLongitude(longitude);
                 forecastInstance.setLatitude(latitude);
-                dateFormat = Converters.fromStringToDate(stringDate);
-                forecastInstance.setSearchTime(dateFormat);
+                //dateFormat = Converters.fromStringToDate(stringDate);
+                forecastInstance.setSearchTime(stringDate);
                 forecastDao.insertFCInstance(forecastInstance);
-
+                Log.d(TAG, forecastInstance.getSearchTime());
                 // populate list of values from result to timeseries objects
                 for (int i = 0; i < response.getTimeSeries().size(); i++) {
                     //Add time of measure
                     stringDate = response.getTimeSeries().get(i).getValidTime();
-                    dateFormat = Converters.fromStringToDate(stringDate);
-                    timeSeriesInstance.setTimeForValues(dateFormat);
+                    //dateFormat = Converters.fromStringToDate(stringDate);
+                    timeSeriesInstance.setTimeForValues(stringDate);
                     for (int j = 0; j < response.getTimeSeries().get(i).getParameters().size(); j++) {
                         parametersBean = response.getTimeSeries().get(i).getParameters().get(j);
                         name = response.getTimeSeries().get(i).getParameters().get(j).getName();
@@ -129,5 +122,5 @@ public class ForecastRepository {
             }
             return null;
         }
-    }
+    }*/
 }

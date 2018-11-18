@@ -19,7 +19,7 @@ import sunny.com.wethrapp.model.WeatherDatabase;
 public class HttpHandler {
 
     private static final String URL_DEF = "https://maceo.sth.kth.se/api/category/pmp3g/version/2/geotype/point/lon/%/lat/¤/";
-
+    private static final String TAG = "LogAppTest";
     /**
      * Constructor empty
      */
@@ -43,8 +43,10 @@ public class HttpHandler {
             Gson gson = new Gson();
             response = gson.fromJson(in, Response.class);
         } catch (MalformedURLException e) {
+            Log.d(TAG, "Make call http error IOex");
             e.printStackTrace();
         } catch (IOException e) {
+            Log.d(TAG, "Make call http error IOex");
             e.printStackTrace();
         } finally {
             if (in != null) {
@@ -62,7 +64,7 @@ public class HttpHandler {
         String returnString = URL_DEF;
         returnString = returnString.replace("%", lon);
         returnString = returnString.replace("¤", lat);
-        Log.d("replaceresult", returnString);
+        Log.d(TAG, returnString);
         return returnString;
     }
 }

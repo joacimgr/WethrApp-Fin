@@ -14,9 +14,9 @@ public class MainActivity extends AppCompatActivity {
 
     public WeatherDatabase weatherDatabase;
     public Button buttonNextView;
-    public EditText inputTextX;
-    public EditText inputTextY;
-
+    public EditText longitud;
+    public EditText latitude;
+    private static final String TAG = "LogAppTest";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,14 +24,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         weatherDatabase = WeatherDatabase.getInstance(getApplicationContext());
 
-        inputTextX = findViewById(R.id.inputLatText);
-        inputTextY = findViewById(R.id.inputLonText);
+        longitud = findViewById(R.id.inputLonText);
+        latitude = findViewById(R.id.inputLatText);
 
         buttonNextView = findViewById(R.id.buttonNextView);
         buttonNextView.setOnClickListener(view -> {
             Intent intent = new Intent(getApplicationContext(), ShowForecastListActivity.class);
-            intent.putExtra("inputX", inputTextX.getText().toString());
-            intent.putExtra("inputY", inputTextY.getText().toString());
+            intent.putExtra("lon", longitud.getText().toString());
+            intent.putExtra("lat", latitude.getText().toString());
             startActivity(intent);
         });
     }

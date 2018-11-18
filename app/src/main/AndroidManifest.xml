@@ -20,7 +20,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".Controller.ShowForecastListActivity" />
-        <activity android:name=".RecyclerView"></activity>
     </application>
 
 </manifest>
