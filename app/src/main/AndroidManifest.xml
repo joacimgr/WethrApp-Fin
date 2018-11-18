@@ -20,11 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Controller.ShowForecastListActivity" />
-
-        <service
-            android:name=".Controller.ResourceService"
-            android:enabled="true"
-            android:exported="true" />
+        <activity android:name=".RecyclerView"></activity>
     </application>
 
 </manifest>

@@ -6,6 +6,8 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import java.util.Date;
+
 
 @Entity(tableName = "timeseries_table")
 public class TimeSeriesInstance {
@@ -16,7 +18,7 @@ public class TimeSeriesInstance {
 
 
     @ColumnInfo(name = "time")
-    private String timeForValues;
+    private Date timeForValues;
 
     @ColumnInfo(name = "temperature")
     private double temperature;
@@ -32,11 +34,11 @@ public class TimeSeriesInstance {
         this.instance_id = instance_id;
     }
 
-    public String getTimeForValues() {
+    public Date getTimeForValues() {
         return timeForValues;
     }
 
-    public void setTimeForValues(String timeForValues) {
+    public void setTimeForValues(Date timeForValues) {
         this.timeForValues = timeForValues;
     }
 
@@ -48,7 +50,7 @@ public class TimeSeriesInstance {
     }
 
     @Ignore
-    public TimeSeriesInstance(String timeForValues, double temperature, double cloudCoverage) {
+    public TimeSeriesInstance(Date timeForValues, double temperature, double cloudCoverage) {
         this.timeForValues = timeForValues;
         this.temperature = temperature;
         this.cloudCoverage = cloudCoverage;

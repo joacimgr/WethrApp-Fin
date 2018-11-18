@@ -10,6 +10,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import java.util.Date;
+
 import sunny.com.wethrapp.model.DB.entity.Converters;
 import sunny.com.wethrapp.model.DB.entity.ForecastInstance;
 import sunny.com.wethrapp.model.DB.entity.TimeSeriesInstance;
@@ -52,10 +54,9 @@ public abstract class WeatherDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(Void... voids) {
-
-            forecastDao.insertOneTimeSeries(new TimeSeriesInstance("2018-11-17T14:00Z", 22.1, 5));
-            forecastDao.insertOneTimeSeries(new TimeSeriesInstance("2018-11-17T15:00Z", 15, 2));
-            forecastDao.insertOneTimeSeries(new TimeSeriesInstance("2018-11-17T16:00Z", 16, 1));
+            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(Converters.fromStringToDate("2018-11-17T14:00Z"), 22.1, 5));
+            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(Converters.fromStringToDate("2018-11-17T14:00Z"), 15, 2));
+            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(Converters.fromStringToDate("2018-11-17T14:00Z"), 16, 1));
             return null;
         }
     }

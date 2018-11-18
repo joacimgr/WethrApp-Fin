@@ -26,7 +26,7 @@ public interface DaoAccess {
     ForecastInstance getForcast();
 
     @Query("SELECT * FROM timeseries_table")
-    LiveData<List<TimeSeriesInstance>> getAllTimeSeries();
+    List<TimeSeriesInstance> getAllTimeSeries();
 
     @Query("DELETE FROM timeseries_table")
     void deleteAllFromTimeseries();

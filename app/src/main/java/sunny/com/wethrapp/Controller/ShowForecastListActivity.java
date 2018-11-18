@@ -8,19 +8,21 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import sunny.com.wethrapp.R;
-import sunny.com.wethrapp.model.DB.entity.ForecastInstance;
 import sunny.com.wethrapp.model.DB.entity.TimeSeriesInstance;
 import sunny.com.wethrapp.model.WeatherDatabase;
-import sunny.com.wethrapp.model.parser.HttpHandler;
-import sunny.com.wethrapp.model.parser.Response;
+import sunny.com.wethrapp.Controller.parser.HttpHandler;
+import sunny.com.wethrapp.Controller.parser.Response;
 
 public class ShowForecastListActivity extends AppCompatActivity {
 
-    TextView coordTextView, serviceTextView;
-    Button serviceButton, updateButton;
-    ArrayList<TimeSeriesInstance> responseText;
-    Response response;
-    ForecastRepository forecastRepository;
+    private TextView coordTextView, serviceTextView;
+    private Button serviceButton, updateButton;
+    private ArrayList<TimeSeriesInstance> responseText;
+    private Response response;
+    private ForecastRepository forecastRepository;
+    private SmhiRepository smhiRepository;
+    private static String value = null;
+    private static String value2 = null;
 
 
     @Override
@@ -28,21 +30,22 @@ public class ShowForecastListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_forecast_list);
         initElements();
+
         String message = "- : -";
-        String value = null;
-        String value2 = null;
+
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            value = bundle.getString("inputX");
-            value2 = bundle.getString("inputY");
+            value = bundle.getString("inputY");
+            value2 = bundle.getString("inputX");
             message = value + " - " + value2;
         }
         coordTextView.setText(message);
 
         serviceButton.setOnClickListener(view -> new Thread(() -> {
-            HttpHandler httpHandler = new HttpHandler();
-            response = httpHandler.makeCall(WeatherDatabase.getInstance(getApplicationContext()));
-            forecastRepository.updateForcasts(response);
+            smhiRepository.makeCall(value,value2);
+            response = smhiRepository.getResponse();
+            forecastRepository = new ForecastRepository(getApplication(), response);
+            forecastRepository.updateForcasts();
             //TODO insert response into database
         }).start());
 
@@ -54,7 +57,8 @@ public class ShowForecastListActivity extends AppCompatActivity {
         serviceButton = findViewById(R.id.startServiceButtonView);
         serviceTextView = findViewById(R.id.serviceTextView);
         updateButton = findViewById(R.id.setTextForcastView);
-        forecastRepository = new ForecastRepository(getApplication());
+        smhiRepository = new SmhiRepository(getApplication());
+
     }
 
 
