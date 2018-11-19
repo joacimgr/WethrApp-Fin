@@ -29,7 +29,6 @@
             android:layout_height="wrap_content"
             android:text="Södertälje"
             android:layout_below="@+id/item_place"/>
-
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

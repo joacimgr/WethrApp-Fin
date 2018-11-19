@@ -14,7 +14,6 @@ public class ConnectionControl {
     public static ConnectionType getConnectionType(ConnectivityManager connectivityManager){
         ConnectionType type = ConnectionType.OFFLINE;
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        boolean isWiFi = activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
         if(activeNetwork.getType() == ConnectivityManager.TYPE_WIFI){
             return ConnectionType.WIFI;
         } else if(activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE){

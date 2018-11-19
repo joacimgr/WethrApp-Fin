@@ -2,6 +2,7 @@ package sunny.com.wethrapp.Controller;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -97,7 +98,6 @@ public class ShowForecastListActivity extends AppCompatActivity {
      * This AsyncTask method decouples information-gathering from the activity's main thread.
      * It will determine the fetching method depending on connectionType and current stored data.
      * This task will update the user with information about it's gather method.
-     *
      */
     public class UpdateListAsynkTask extends AsyncTask<Void, String, List<TimeSeriesInstance>> {
         private Response response;
@@ -124,26 +124,34 @@ public class ShowForecastListActivity extends AppCompatActivity {
             boolean isInRange = false;
             ConnectionType type;
             ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            type = ConnectionControl.getConnectionType(connMgr);
+            NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
+            boolean isConnected = activeNetwork != null &&
+                    activeNetwork.isConnectedOrConnecting();
+
+            if (isConnected) {
+                type = ConnectionControl.getConnectionType(connMgr);
+            } else {
+                type = ConnectionType.OFFLINE;
+            }
             Log.d(TAG, type.toString());
             int dbContainsForecast = forecastDao.containsRowsForecast();
-            if(dbContainsForecast > 0){
-                isInRange = CheckCoordInRange.isInRange(forecastDao.getForecast().getLongitude(), forecastDao.getForecast().getLongitude(), Double.parseDouble(lon), Double.parseDouble(lat));
+            if (dbContainsForecast > 0) {
+                isInRange = CheckCoordInRange.isInRange(
+                        forecastDao.getForecast().getLongitude(),
+                        forecastDao.getForecast().getLatitude(),
+                        Double.parseDouble(lon),
+                        Double.parseDouble(lat));
                 Log.d(TAG, " isInRange: " + isInRange);
             }
 
-            if(type == ConnectionType.OFFLINE){
+            if (type == ConnectionType.OFFLINE) {
                 makeCall = false;
-                if(dbContainsForecast > 0 && isInRange){
-                    publishProgress("NO CONNECTION\nForecasts might be outdated");
-                    getFromDb();
-                } else {
-                    publishProgress("NO CONNECTION\nDatabase empty");
-                    return timeSeriesInstancesList;
-                }
-            } else if(type == ConnectionType.MOBILE){
-                if(dbContainsForecast > 0 && isInRange){
-                    if(isBeforeOneHour(forecastDao.getForecast().getTimestamp())){
+                publishProgress("NO CONNECTION\nForecasts might be outdated");
+                getFromDb();
+                return timeSeriesInstancesList;
+            } else if (type == ConnectionType.MOBILE) {
+                if (dbContainsForecast > 0 && isInRange) {
+                    if (isBeforeOneHour(forecastDao.getForecast().getTimestamp())) {
                         Log.d(TAG, "MOBILE IN RANGE BEFORE ONE HOUR");
                         clearDb();
                         publishProgress("Fetching new information from SMHI");
@@ -156,8 +164,8 @@ public class ShowForecastListActivity extends AppCompatActivity {
                     publishProgress("Fetching new information from SMHI");
                 }
             } else {
-                if(dbContainsForecast > 0 && isInRange) {
-                    if(isBeforeTwentyMinutes(forecastDao.getForecast().getTimestamp())){
+                if (dbContainsForecast > 0 && isInRange) {
+                    if (isBeforeTwentyMinutes(forecastDao.getForecast().getTimestamp())) {
                         clearDb();
                         publishProgress("Fetching new information from SMHI");
                     } else {
@@ -166,10 +174,11 @@ public class ShowForecastListActivity extends AppCompatActivity {
                         publishProgress("Fetching information from local storage");
                     }
                 } else {
+                    clearDb();
                     publishProgress("Fetching new information from SMHI");
                 }
             }
-            if(makeCall){
+            if (makeCall) {
                 clearDb();
                 Log.d(TAG, "in async task Make Call - LAT: " + lat + " LON: " + lon);
                 HttpHandler httpHandler = new HttpHandler();
@@ -185,12 +194,12 @@ public class ShowForecastListActivity extends AppCompatActivity {
             return timeSeriesInstancesList;
         }
 
-        private void clearDb(){
+        private void clearDb() {
             forecastDao.deleteAllFromForecastTable();
             forecastDao.deleteAllFromTimeseries();
         }
 
-        private void getFromDb(){
+        private void getFromDb() {
             forecastInstance = forecastDao.getForecast();
             timeSeriesInstancesList = forecastDao.getAllTimeSeries();
         }
@@ -205,7 +214,7 @@ public class ShowForecastListActivity extends AppCompatActivity {
          *
          * @return
          */
-        private List<TimeSeriesInstance> extractDataFromJson(){
+        private List<TimeSeriesInstance> extractDataFromJson() {
             try {
                 String name;
                 forecastInstance = new ForecastInstance();
@@ -255,6 +264,7 @@ public class ShowForecastListActivity extends AppCompatActivity {
         /**
          * When doInBackground is finished, This method will update the UI
          * and fill The view with information.
+         *
          * @param ts
          */
         @Override
