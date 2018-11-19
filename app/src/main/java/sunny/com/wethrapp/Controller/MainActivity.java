@@ -13,6 +13,11 @@ import android.widget.Toast;
 import sunny.com.wethrapp.R;
 import sunny.com.wethrapp.model.WeatherDatabase;
 
+/**
+ * This Activity serves as the welcome screen. It contains editTextViews for
+ * longitude, latitude and location name search.
+ *
+ */
 public class MainActivity extends AppCompatActivity {
 
     public WeatherDatabase weatherDatabase;
@@ -22,6 +27,12 @@ public class MainActivity extends AppCompatActivity {
     public EditText longitud, latitude, searchParamView;
     private static final String TAG = "LogAppTest";
 
+    /**
+     * This method will execute when the activity is created and recreated when screen-flip occurs.
+     * Before continuing to showforecastlistactivity it stores lat, long in the intent.
+     * Search edit text field is saved to intent for LocationListActivity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        weatherDatabase.daoAccess().deleteAllFromTimeseries();
         if(weatherDatabase != null){
             weatherDatabase = null;
         }

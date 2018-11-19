@@ -3,6 +3,7 @@ package sunny.com.wethrapp.model.DB.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.Relation;
 import android.arch.persistence.room.TypeConverters;
@@ -11,6 +12,9 @@ import java.util.Date;
 import java.util.List;
 
 
+/**
+ * DB entity, representing a Forecast search instant and coordinates.
+ */
 @Entity(tableName = "forecast_table")
 public class ForecastInstance {
 
@@ -19,10 +23,24 @@ public class ForecastInstance {
     private int id;
 
     @ColumnInfo(name = "search_time")
-    private Date searchTime;
+    private long searchTime;
 
     @ColumnInfo(name = "latitude")
     private double latitude;
+
+    @ColumnInfo(name = "longitude")
+    private double longitude;
+
+    @ColumnInfo(name = "timestamp")
+    private long timestamp;
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public double getLatitude() {
         return latitude;
@@ -40,10 +58,16 @@ public class ForecastInstance {
         this.longitude = longitude;
     }
 
-    @ColumnInfo(name = "longitude")
-    private double longitude;
+    public ForecastInstance() {
+    }
 
-    public ForecastInstance() {}
+    @Ignore
+    public ForecastInstance(long searchTime, double latitude, long timestamp, double longitude) {
+        this.searchTime = searchTime;
+        this.latitude = latitude;
+        this.timestamp = timestamp;
+        this.longitude = longitude;
+    }
 
     public int getId() {
         return id;
@@ -53,11 +77,11 @@ public class ForecastInstance {
         this.id = id;
     }
 
-    public Date getSearchTime() {
+    public long getSearchTime() {
         return searchTime;
     }
 
-    public void setSearchTime(Date searchTime) {
+    public void setSearchTime(long searchTime) {
         this.searchTime = searchTime;
     }
 

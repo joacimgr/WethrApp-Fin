@@ -1,10 +1,9 @@
 package sunny.com.wethrapp.Controller;
 
-
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -12,15 +11,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
-
-import org.joda.time.DateTime;
-import org.joda.time.Minutes;
-
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 
 import sunny.com.wethrapp.Controller.parser.HttpHandler;
 import sunny.com.wethrapp.R;
@@ -31,8 +26,16 @@ import sunny.com.wethrapp.model.DaoAccess;
 import sunny.com.wethrapp.model.WeatherDatabase;
 import sunny.com.wethrapp.view.ForecastAdaptor;
 
-import static sunny.com.wethrapp.model.DB.entity.Converters.fromStringToDate;
+import static sunny.com.wethrapp.model.DB.entity.Converters.dateToStringPresentable;
+import static sunny.com.wethrapp.model.DB.entity.Converters.isBeforeOneHour;
+import static sunny.com.wethrapp.model.DB.entity.Converters.stringToTimestamp;
+import static sunny.com.wethrapp.model.DB.entity.Converters.isBeforeTwentyMinutes;
 
+/**
+ * This activity Shows any weather information that it gets presented with
+ * either from Database or from Öppna Data API.
+ * Contains A recyclerView And information TextViews.
+ */
 public class ShowForecastListActivity extends AppCompatActivity {
 
     protected List<TimeSeriesInstance> timeSeriesInstancesList;
@@ -47,7 +50,6 @@ public class ShowForecastListActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        weatherDatabase.daoAccess().deleteAllFromTimeseries();
         super.onDestroy();
     }
 
@@ -73,20 +75,11 @@ public class ShowForecastListActivity extends AppCompatActivity {
         searchParamView = findViewById(R.id.search_text);
         searchParamView.setText(sb.toString());
 
-        UpdateListAsynkTask workerThread = new UpdateListAsynkTask(lat, lon, WeatherDatabase.getInstance(getApplicationContext()).daoAccess());
+
+        UpdateListAsynkTask workerThread = new UpdateListAsynkTask(lat, lon, WeatherDatabase.getInstance(getApplicationContext()).daoAccess(), context);
         workerThread.execute();
 
         initElements();
-    }
-
-
-
-    //https://stackoverflow.com/questions/7080051/checking-if-difference-between-2-date-is-more-than-20-minutes - time is a bitch
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private boolean isTimeForUpdate(Date date) {
-        boolean result = Minutes.minutesBetween(new DateTime(date), new DateTime())
-                .isGreaterThan(Minutes.minutes(20));
-        return result;
     }
 
 
@@ -100,103 +93,156 @@ public class ShowForecastListActivity extends AppCompatActivity {
     }
 
 
-    public class UpdateListAsynkTask extends AsyncTask<Void, Void, List<TimeSeriesInstance>> {
+    /**
+     * This AsyncTask method decouples information-gathering from the activity's main thread.
+     * It will determine the fetching method depending on connectionType and current stored data.
+     * This task will update the user with information about it's gather method.
+     *
+     */
+    public class UpdateListAsynkTask extends AsyncTask<Void, String, List<TimeSeriesInstance>> {
         private Response response;
         String lat, lon;
         private static final String TAG = "LogAppTest";
         private DaoAccess forecastDao;
         private ForecastInstance forecastInstance;
         private TimeSeriesInstance timeSeriesInstance;
+        private Context context;
+        private String[] values;
 
-        public UpdateListAsynkTask(String lat, String lon, DaoAccess forecastDao) {
+        public UpdateListAsynkTask(String lat, String lon, DaoAccess forecastDao, Context context) {
             this.lat = lat;
             this.lon = lon;
             this.forecastDao = forecastDao;
             this.forecastInstance = new ForecastInstance();
             this.timeSeriesInstance = new TimeSeriesInstance();
+            this.context = context;
         }
 
         @Override
         protected List<TimeSeriesInstance> doInBackground(Void... voids) {
-            Log.d(TAG, "in async task Make Call - LAT: " + lat + " LON: " + lon);
-            HttpHandler httpHandler = new HttpHandler();
-            this.response = httpHandler.makeCall(lon, lat);
-            if (response != null) {
-                Log.d(TAG, "smhirepo - response not null");
+            boolean makeCall = true;
+            ConnectionType type;
+            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            type = ConnectionControl.getConnectionType(connMgr);
+            if(type == ConnectionType.OFFLINE){
+                makeCall = false;
+                if(forecastDao.containsRowsForecast() > 0){
+                    publishProgress("NO CONNECTION\nForecasts might be outdated");
+                    forecastInstance = forecastDao.getForecast();
+                    timeSeriesInstancesList = forecastDao.getAllTimeSeries();
+                } else {
+                    publishProgress("NO CONNECTION\nDatabase empty");
+                }
+            } else if(type == ConnectionType.MOBILE){
+                if(forecastDao.containsRowsForecast() > 0){
+                    if(isBeforeOneHour(forecastDao.getForecast().getTimestamp())){
+                        forecastDao.deleteAllFromForecastTable();
+                        forecastDao.deleteAllFromTimeseries();
+                        publishProgress("Fetching new information from SMHI\n");
+                    } else {
+                        makeCall = false;
+                        publishProgress("Fetching information from DB");
+                        forecastInstance = forecastDao.getForecast();
+                        timeSeriesInstancesList = forecastDao.getAllTimeSeries();
+                    }
+                } else {
+                    publishProgress("Fetching new information from SMHI");
+                }
             } else {
-                Log.d(TAG, "smhirepo - response null");
-                return new ArrayList<>();
+                if(isBeforeTwentyMinutes(forecastDao.getForecast().getTimestamp())){
+                    publishProgress("Fetching new information from SMHI");
+                } else {
+                    makeCall = false;
+                    forecastInstance = forecastDao.getForecast();
+                    timeSeriesInstancesList = forecastDao.getAllTimeSeries();
+                    publishProgress("Fetching information from local storage");
+                }
             }
-            return extractDataFromJson();
+            if(makeCall){
+                forecastDao.deleteAllFromForecastTable();
+                forecastDao.deleteAllFromTimeseries();
+                Log.d(TAG, "in async task Make Call - LAT: " + lat + " LON: " + lon);
+                HttpHandler httpHandler = new HttpHandler();
+                this.response = httpHandler.makeCall(lon, lat);
+                if (response != null) {
+                    Log.d(TAG, "smhirepo - response not null");
+                } else {
+                    Log.d(TAG, "smhirepo - response null");
+                    return new ArrayList<>();
+                }
+                return extractDataFromJson();
+            }
+            return timeSeriesInstancesList;
+
         }
 
+        @Override
+        protected void onProgressUpdate(String... values) {
+            Toast.makeText(context, values[0], Toast.LENGTH_SHORT).show();
+        }
+
+        /**
+         * This method iterates over all result-instances and creates entities.
+         *
+         * @return
+         */
         private List<TimeSeriesInstance> extractDataFromJson(){
             try {
                 String name;
                 forecastInstance = new ForecastInstance();
                 timeSeriesInstance = new TimeSeriesInstance();
                 ArrayList<TimeSeriesInstance> timeSeriesInstances = new ArrayList<>();
-                Response.TimeSeriesBean.ParametersBean parametersBean;
-                String stringDate = response.getApprovedTime();
+                Response.TimeSeries.Parameters parameters;
+                String stringDate;
 
                 double longitude = response.getGeometry().getCoordinates().get(0).get(0);
                 double latitude = response.getGeometry().getCoordinates().get(0).get(1);
                 forecastInstance.setLongitude(longitude);
                 forecastInstance.setLatitude(latitude);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    forecastInstance.setTimestamp(new Date().getTime());
+                }
 
-                forecastInstance.setSearchTime(fromStringToDate(stringDate));
                 forecastDao.insertFCInstance(forecastInstance);
 
-                Log.d(TAG, forecastInstance.getSearchTime().toString());
 
                 for (int i = 0; i < response.getTimeSeries().size(); i++) {
-                    //Add time of measure
                     Date dateFormat = null;
                     stringDate = response.getTimeSeries().get(i).getValidTime();
-                    Log.d(this.getClass().getSimpleName().toUpperCase() + " " + TAG, " dateReformatted: " + stringDate);
 
-                    //convert date value from string to Date format.
-                    dateFormat = fromStringToDate(stringDate);
-                    //Log.d(this.getClass().getSimpleName().toUpperCase() + " " + TAG, " dateReformatted: " + dateFormat.toString());
-                    timeSeriesInstance.setTimeForValues(dateFormat);
-
-                    // Iterate through response set and save relevant info to entities.
+                    dateFormat = new Date(stringToTimestamp(stringDate));
+                    timeSeriesInstance.setTimeForValues(dateFormat.getTime());
                     for (int j = 0; j < response.getTimeSeries().get(i).getParameters().size(); j++) {
-                        parametersBean = response.getTimeSeries().get(i).getParameters().get(j);
+                        parameters = response.getTimeSeries().get(i).getParameters().get(j);
                         name = response.getTimeSeries().get(i).getParameters().get(j).getName();
                         if (name.equals("t")) { // temperature
-                            timeSeriesInstance.setTemperature(parametersBean.getValues().get(0));
+                            timeSeriesInstance.setTemperature(parameters.getValues().get(0));
                         } else if (name.equals("tcc_mean")) { // cc
-                            timeSeriesInstance.setCloudCoverage(parametersBean.getValues().get(0));
+                            timeSeriesInstance.setCloudCoverage(parameters.getValues().get(0));
                         }
                     }
                     timeSeriesInstances.add(timeSeriesInstance);
                     timeSeriesInstance = new TimeSeriesInstance();
                 }
                 forecastDao.insertAllTimeSeries(timeSeriesInstances);
-                Log.d(TAG, "response and add to db successful");
                 return timeSeriesInstances;
             } catch (Exception e) {
                 Log.d(TAG, "error when inserting");
             }
-            Log.d(TAG, "Returning new ARRAY from response");
+            Log.d(TAG, "new ArrayList<>() from extractDataFromJson()");
             return new ArrayList<>();
         }
 
+        /**
+         * When doInBackground is finished, This method will update the UI
+         * and fill The view with information.
+         * @param ts
+         */
         @Override
         protected void onPostExecute(List<TimeSeriesInstance> ts) {
-            String date = String.valueOf(forecastInstance.getSearchTime());
-            String[] dateSplit = date.split(" ");
-            String[] timeSplit = dateSplit[3].split(":");
-            StringBuffer sb = new StringBuffer();
-            sb.append(dateSplit[2]);
-            sb.append(" ");
-            sb.append(dateSplit[1]);
-            sb.append(" ");
-            sb.append(timeSplit[0]);
-            sb.append(":");
-            sb.append(timeSplit[1]);
-            dateTextView.setText(sb.toString());
+            Date date = new Date(forecastInstance.getTimestamp());
+            String dateText = dateToStringPresentable(date);
+            dateTextView.setText(dateText);
             ForecastAdaptor adaptor = new ForecastAdaptor(ts);
             timeSeriesInstancesList = ts;
             adaptor.setTimeSeriesInstanceList(ts);

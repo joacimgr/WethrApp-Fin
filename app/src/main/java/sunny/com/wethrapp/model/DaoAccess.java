@@ -10,6 +10,10 @@ import sunny.com.wethrapp.model.DB.entity.ForecastInstance;
 import sunny.com.wethrapp.model.DB.entity.Location;
 import sunny.com.wethrapp.model.DB.entity.TimeSeriesInstance;
 
+/**
+ * This class Contains the methods needed to access the application database.
+ *
+ */
 @Dao
 public interface DaoAccess {
 
@@ -25,8 +29,11 @@ public interface DaoAccess {
     @Insert
     void insertAllLocations(List<Location> locations);
 
+    @Query("SELECT count(*) FROM forecast_table")
+    int containsRowsForecast();
+
     @Query("SELECT * FROM forecast_table LIMIT 1")
-    ForecastInstance getForcast();
+    ForecastInstance getForecast();
 
     @Query("SELECT * FROM timeseries_table")
     List<TimeSeriesInstance> getAllTimeSeries();

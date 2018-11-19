@@ -8,14 +8,25 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
+import java.sql.Date;
 import java.util.List;
 
 import sunny.com.wethrapp.R;
 import sunny.com.wethrapp.model.DB.entity.TimeSeriesInstance;
 
+import static sunny.com.wethrapp.model.DB.entity.Converters.dateToStringPresentable;
 
+
+/**
+ * This class is a RecyclerView Adaptor for our ShowForecastListActivity, inflating the view
+ * with items from current list of timeseriesInstanceList.
+ */
 public class ForecastAdaptor extends RecyclerView.Adapter<ForecastAdaptor.ForecastHolder> {
 
+    /**
+     * This class holds current items view and maps the object to the relevant
+     * XML.
+     */
     class ForecastHolder extends RecyclerView.ViewHolder{
         private TextView textViewDate;
         private TextView textViewCloudCoverage;
@@ -44,26 +55,26 @@ public class ForecastAdaptor extends RecyclerView.Adapter<ForecastAdaptor.Foreca
         return new ForecastHolder(itemView);
     }
 
+    /**
+     * This method sets the items with information gathered from the current
+     * timeseriesList.
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull ForecastHolder holder, int position) {
         TimeSeriesInstance currentForecast = timeSeriesInstanceList.get(position);
-        String date = String.valueOf(currentForecast.getTimeForValues());
-        String[] dateSplit = date.split(" ");
-        String[] timeSplit = dateSplit[3].split(":");
-        StringBuffer sb = new StringBuffer();
-        sb.append(dateSplit[2]);
-        sb.append(" ");
-        sb.append(dateSplit[1]);
-        sb.append(" ");
-        sb.append(timeSplit[0]);
-        sb.append(":");
-        sb.append(timeSplit[1]);
-
-        holder.textViewDate.setText(sb.toString());
+        Date timeDate = new Date(currentForecast.getTimeForValues());
+        String present = dateToStringPresentable(timeDate);
+        holder.textViewDate.setText(present);
         holder.textViewTemperature.setText(String.valueOf(currentForecast.getTemperature()));
         holder.textViewCloudCoverage.setText(String.valueOf(currentForecast.getCloudCoverage()));
     }
 
+    /**
+     * This method returns the size of current timeseriesList.
+     * @return
+     */
     @Override
     public int getItemCount() {
         return timeSeriesInstanceList.size();

@@ -2,12 +2,18 @@ package sunny.com.wethrapp.Controller.parser;
 
 import java.util.List;
 
+/**
+ * This class serves as holder for our response from gson.
+ * Example requests:
+ * https://maceo.sth.kth.se/api/category/pmp3g/version/2/geotype/point/lon/14.333/lat/60.383/
+ * https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/14.333/lat/60.383/data.json
+ */
 public class Response {
 
     private String approvedTime;
     private String referenceTime;
-    private GeometryBean geometry;
-    private List<TimeSeriesBean> timeSeries;
+    private Geometry geometry;
+    private List<TimeSeries> timeSeries;
 
     public String getApprovedTime() {
         return approvedTime;
@@ -25,23 +31,23 @@ public class Response {
         this.referenceTime = referenceTime;
     }
 
-    public GeometryBean getGeometry() {
+    public Geometry getGeometry() {
         return geometry;
     }
 
-    public void setGeometry(GeometryBean geometry) {
+    public void setGeometry(Geometry geometry) {
         this.geometry = geometry;
     }
 
-    public List<TimeSeriesBean> getTimeSeries() {
+    public List<TimeSeries> getTimeSeries() {
         return timeSeries;
     }
 
-    public void setTimeSeries(List<TimeSeriesBean> timeSeries) {
+    public void setTimeSeries(List<TimeSeries> timeSeries) {
         this.timeSeries = timeSeries;
     }
 
-    public static class GeometryBean {
+    public static class Geometry {
 
         private String type;
         private List<List<Double>> coordinates;
@@ -63,10 +69,10 @@ public class Response {
         }
     }
 
-    public static class TimeSeriesBean {
+    public static class TimeSeries {
 
         private String validTime;
-        private List<ParametersBean> parameters;
+        private List<Parameters> parameters;
 
         public String getValidTime() {
             return validTime;
@@ -76,15 +82,15 @@ public class Response {
             this.validTime = validTime;
         }
 
-        public List<ParametersBean> getParameters() {
+        public List<Parameters> getParameters() {
             return parameters;
         }
 
-        public void setParameters(List<ParametersBean> parameters) {
+        public void setParameters(List<Parameters> parameters) {
             this.parameters = parameters;
         }
 
-        public static class ParametersBean {
+        public static class Parameters {
 
             private String name;
             private String levelType;

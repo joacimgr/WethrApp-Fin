@@ -1,57 +1,93 @@
 package sunny.com.wethrapp.model.DB.entity;
 
 import android.arch.persistence.room.TypeConverter;
-import android.util.Log;
 
-import java.text.ParseException;
+import java.sql.Timestamp;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
+/**
+ * Converter to help Room database to store and handle Date and long as timestamp.
+ * additional methods to help present date on screen.
+ */
 public class Converters {
 
     private static final String TAG = "LogAppTest";
 
+    /**
+     * This method receives a string in the format {yyyy-MM-dd'T'hh:mm:ss'Z'} and converts it
+     * to a timestamp for easy storage and timediff checks. ie(is date A 20 min before date B).
+     * @param input
+     * @return
+     */
     @TypeConverter
-    public static Date fromStringToDate(String stringDate) {
-        Date date = null;
-        stringDate = stringDate.replace("T", " ");
-        stringDate = stringDate.replace("Z", " ");
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd H:mm:ss ", Locale.GERMAN);
+    public static long stringToTimestamp(String input){
         try {
-            date = sdf.parse(stringDate);
-        } catch (ParseException e) {
-            Log.d(TAG, "Conversion error in ConvertStringToDate");
+            TimeZone timeZone = TimeZone.getTimeZone("Europe/Stockholm");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            dateFormat.setTimeZone(timeZone);
+            Date parsedDate = dateFormat.parse(input);
+            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+            //System.out.println(timestamp.getTime());
+
+            //System.out.println(input);
+            return timestamp.getTime();
+        } catch(Exception e) {
             e.printStackTrace();
         }
-        Log.d(TAG, " stringDate: " + date.toString());
-        return date == null ? new Date() : date;
+        return new Date().getTime();
     }
 
+
+    /**
+     * Converts a timestamp to corresponding Date.
+     * @param date
+     * @return
+     */
     @TypeConverter
-    public String dateToString(Date date) {
-        if (date != null) {
-            int YYYY = date.getYear();
-            int MM = date.getMonth();
-            int DD = date.getDay();
-            int HH = date.getHours();
-            int mm = date.getMinutes();
-            StringBuffer sb = new StringBuffer();
-            sb.append(YYYY);
-            sb.append("-");
-            sb.append(MM);
-            sb.append("-");
-            sb.append(DD);
-            sb.append("T");
-            sb.append(HH);
-            sb.append(":");
-            sb.append(mm);
-            sb.append("Z");
-            return sb.toString();
+    public Date longToDate(long date) {
+        return new Date(date);
+    }
+
+    public static String dateToStringPresentable(Date date){
+        TimeZone tz = TimeZone.getTimeZone("Europe/Stockholm");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM   HH:mm");
+        formatter.setTimeZone(tz);
+        String s = formatter.format(date);
+        return s;
+    }
+
+    /**
+     * This method compares timestamp searchTime with this instant and returns true if
+     * result is more than 20 minutes.
+     * @param searchTime
+     * @return
+     * */
+    public static boolean isBeforeTwentyMinutes(long searchTime){
+        Date now = new Date();
+        if (now.getTime() - searchTime >= 20*60*1000) {
+            return true;
         }
-        return "error";
+        return false;
+    }
+
+
+    /**
+     * This method compares timestamp searchTime with this instant and returns true if
+     * result is more than 60 minutes.
+     * @param searchTime
+     * @return
+     */
+    public static boolean isBeforeOneHour(long searchTime){
+        Date now = new Date();
+        if (now.getTime() - searchTime >= 60*60*1000) {
+            return true;
+        }
+        return false;
     }
 
 }

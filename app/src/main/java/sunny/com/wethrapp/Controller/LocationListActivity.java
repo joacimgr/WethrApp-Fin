@@ -1,6 +1,7 @@
 package sunny.com.wethrapp.Controller;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -45,7 +46,9 @@ public class LocationListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_location_list);
         weatherDatabase = WeatherDatabase.getInstance(getApplicationContext());
         recyclerView = findViewById(R.id.recycle_view_location);
-        //Check if bundle
+
+
+
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             searchParameter = (String) bundle.get("searchParam");
@@ -54,13 +57,13 @@ public class LocationListActivity extends AppCompatActivity {
         }
         Log.d(TAG, "searchParam: " + searchParameter);
         searchParamView = findViewById(R.id.searchParamEditView);
-        try{
-            UpdateLocationListAsyncTask up = new UpdateLocationListAsyncTask(searchParameter, weatherDatabase.daoAccess());
-            up.execute();
-        }catch (Exception e){
 
-            System.err.println(e);
-        }
+
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectionControl.getConnectionType(connMgr);
+        UpdateLocationListAsyncTask up = new UpdateLocationListAsyncTask(searchParameter, weatherDatabase.daoAccess());
+        up.execute();
+
         initElements();
 
     }
@@ -94,9 +97,7 @@ public class LocationListActivity extends AppCompatActivity {
 
             HttpHandler httpHandler = new HttpHandler();
             this.locationResponse = httpHandler.makeCallLocation(searchParamPlace);
-            //Log.d(TAG, "response: " + locationResponse.get(0).getPlace());
             for (LocationResponse l : locationResponse){
-                Log.d(TAG , "Location place: " + l.getPlace());
                 Location newLP = new Location();
                 newLP.setGeonameid(l.getGeonameid());
                 newLP.setLat(l.getLat());
@@ -105,7 +106,6 @@ public class LocationListActivity extends AppCompatActivity {
                 newLP.setPlace(l.getPlace());
                 locations.add(newLP);
             }
-            Log.d(TAG, " size of locations on async task: " + locations.size());
             daoAccess.insertAllLocations(locations);
 
             return locations;

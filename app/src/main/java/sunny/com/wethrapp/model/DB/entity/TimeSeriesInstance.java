@@ -9,6 +9,10 @@ import android.support.annotation.NonNull;
 import java.util.Date;
 
 
+/**
+ * This is a DB entity representing a weather forecast in a specific instant of time.
+ * contains temperature cloud-coverage and time.
+ */
 @Entity(tableName = "timeseries_table")
 public class TimeSeriesInstance {
 
@@ -18,7 +22,7 @@ public class TimeSeriesInstance {
 
 
     @ColumnInfo(name = "time")
-    private Date timeForValues;
+    private long timeForValues;
 
     @ColumnInfo(name = "temperature")
     private double temperature;
@@ -34,11 +38,11 @@ public class TimeSeriesInstance {
         this.instance_id = instance_id;
     }
 
-    public Date getTimeForValues() {
+    public long getTimeForValues() {
         return timeForValues;
     }
 
-    public void setTimeForValues(Date timeForValues) {
+    public void setTimeForValues(long timeForValues) {
         this.timeForValues = timeForValues;
     }
 
@@ -50,7 +54,7 @@ public class TimeSeriesInstance {
     }
 
     @Ignore
-    public TimeSeriesInstance(Date timeForValues, double temperature, double cloudCoverage) {
+    public TimeSeriesInstance(long timeForValues, double temperature, double cloudCoverage) {
         this.timeForValues = timeForValues;
         this.temperature = temperature;
         this.cloudCoverage = cloudCoverage;

@@ -15,10 +15,13 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class handles requests and returns results
+ */
 public class HttpHandler {
 
-    private static final String URL_DEF = "https://maceo.sth.kth.se/api/category/pmp3g/version/2/geotype/point/lon/%/lat/¤/";
-    private static final String URL_DEF_SMHI_POINT = "https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/%/lat/¤/data.json ";
+    private static final String URL_DEF = "https://maceo.sth.kth.se/api/category/pmp3g/version/2/geotype/point/lon/{lon}/lat/{lat}/";
+    private static final String URL_DEF_SMHI_POINT = "https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/{lon}/lat/{lat}/data.json ";
 
     private static final String URL_LOC_DEF = "http://smhi.se/wpt-a/backend_solr/autocomplete/search/{place}";
     private static final String TAG = "LogAppTest";
@@ -97,6 +100,12 @@ public class HttpHandler {
         return new ArrayList<>();
     }
 
+    /**
+     * Replace {place} on URL_LOC_DEF (see class javadoc) with a parameter.
+     * This to create a dynamic call with user interaction on what to get.
+     * @param place
+     * @return
+     */
     private String replacePlaceOnURL(String place) {
         String returnString = URL_LOC_DEF;
         returnString = returnString.replace("{place}", place);
@@ -104,10 +113,17 @@ public class HttpHandler {
         return returnString;
     }
 
+    /**
+     * Replaces {lon} with longitude and {lat} with lat parameter.
+     * This to create a dynamic call with user interaction on what to get.
+     * @param lat
+     * @param lon
+     * @return
+     */
     private String replaceLatLonOnURL(String lat, String lon){
         String returnString = URL_DEF_SMHI_POINT;
-        returnString = returnString.replace("%", lon);
-        returnString = returnString.replace("¤", lat);
+        returnString = returnString.replace("{lon}", lon);
+        returnString = returnString.replace("{lat}", lat);
         Log.d(TAG, returnString);
         return returnString;
     }

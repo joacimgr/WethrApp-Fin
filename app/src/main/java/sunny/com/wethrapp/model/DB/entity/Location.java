@@ -3,6 +3,9 @@ package sunny.com.wethrapp.model.DB.entity;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+/**
+ * This is a DB entity representing a location on the map.
+ */
 @Entity(tableName = "location_table")
 public class Location {
 

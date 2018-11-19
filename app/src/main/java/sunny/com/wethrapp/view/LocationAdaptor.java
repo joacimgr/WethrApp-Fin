@@ -13,6 +13,10 @@ import java.util.List;
 import sunny.com.wethrapp.R;
 import sunny.com.wethrapp.model.DB.entity.Location;
 
+/**
+ * This class is a RecyclerView Adaptor for our LocationListActivity, inflating the view
+ * with items from current list of LocationList.
+ */
 public class LocationAdaptor extends RecyclerView.Adapter<LocationAdaptor.LocationHolder> {
 
     class LocationHolder extends RecyclerView.ViewHolder{

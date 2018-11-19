@@ -1,8 +1,10 @@
 package sunny.com.wethrapp.Controller.parser;
 
-import java.util.List;
 
-
+/**
+ * This class holds gson response when gathering information from
+ * http://smhi.se/wpt-a/backend_solr/autocomplete/search
+ */
 public class LocationResponse {
 
     private int geonameid;

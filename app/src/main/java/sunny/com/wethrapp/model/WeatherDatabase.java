@@ -9,17 +9,20 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
-import java.util.Date;
-
-import sunny.com.wethrapp.Controller.parser.LocationResponse;
 import sunny.com.wethrapp.model.DB.entity.Converters;
 import sunny.com.wethrapp.model.DB.entity.ForecastInstance;
 import sunny.com.wethrapp.model.DB.entity.Location;
 import sunny.com.wethrapp.model.DB.entity.TimeSeriesInstance;
 
-import static sunny.com.wethrapp.model.DB.entity.Converters.fromStringToDate;
+import static sunny.com.wethrapp.model.DB.entity.Converters.stringToTimestamp;
 
+/**
+ * This class is an abstract class with a singleton pattern making database interaction
+ * concurrent. It also contains an AsyncTask that is called upon at instantiation of dBinstance.
+ * The ATask will populate our database with example information.
+ **/
 @Database(entities = {ForecastInstance.class, TimeSeriesInstance.class, Location.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class WeatherDatabase extends RoomDatabase {
@@ -28,40 +31,42 @@ public abstract class WeatherDatabase extends RoomDatabase {
 
     public abstract DaoAccess daoAccess();
 
-    public static WeatherDatabase getInstance(Context context){
-        if(dBinstance == null) {
+    public static WeatherDatabase getInstance(Context context) {
+        if (dBinstance == null) {
             dBinstance = Room.databaseBuilder(context.getApplicationContext(), WeatherDatabase.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addCallback(roomCallback)
                     .build();
         }
         return dBinstance;
     }
 
-    public static void destroyInstance(){
+    public static void destroyInstance() {
         dBinstance = null;
     }
 
     private static RoomDatabase.Callback roomCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
-            super.onCreate(db);
+            InitializeDatabaseAsyncTask workerThread = new InitializeDatabaseAsyncTask(dBinstance.daoAccess());
+            workerThread.execute();
+            //super.onCreate(db);
         }
     };
 
     private static class InitializeDatabaseAsyncTask extends AsyncTask<Void, Void, Void> {
         private DaoAccess forecastDao;
 
-        private InitializeDatabaseAsyncTask(DaoAccess daoAccess){
+        private InitializeDatabaseAsyncTask(DaoAccess daoAccess) {
             forecastDao = daoAccess;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            ;
-            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(fromStringToDate("2018-11-17T14:00Z"), 22.1, 5));
-            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(fromStringToDate("2018-11-17T15:00Z"), 15, 2));
-            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(fromStringToDate("2018-11-17T17:00Z"), 16, 1));
+            Log.d("INIT DATABASE ", "VOID");
+            forecastDao.insertFCInstance(new ForecastInstance(stringToTimestamp("2018-11-17T14:00Z"), 60.383, stringToTimestamp("2018-11-17T14:00Z"), 14.333));
+            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(stringToTimestamp("2018-11-17T14:00Z"), 22.1, 5));
+            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(stringToTimestamp("2018-11-17T15:00Z"), 15, 2));
+            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(stringToTimestamp("2018-11-17T17:00Z"), 16, 1));
             return null;
         }
     }
