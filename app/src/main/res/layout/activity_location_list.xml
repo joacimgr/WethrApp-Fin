@@ -2,34 +2,26 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/showForecastView"
+    android:id="@+id/location_constraint_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Controller.ShowForecastListActivity">
+    tools:context=".Controller.LocationListActivity">
     <TextView
-        android:id="@+id/approved_time"
+        android:id="@+id/search_param_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:textAlignment="textEnd"
-        android:text="2011-11-1 11:11"
+        android:text="järna"
         />
-    <TextView
-        android:id="@+id/search_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="placeholder"
-        android:textAlignment="textEnd"
-        app:layout_constraintEnd_toEndOf="parent" />
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycle_view"
+        android:id="@+id/recycle_view_location"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="18dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        tools:listitem="@layout/item_view">
+        tools:listitem="@layout/location_place_view">
 
     </android.support.v7.widget.RecyclerView>
 </android.support.constraint.ConstraintLayout>

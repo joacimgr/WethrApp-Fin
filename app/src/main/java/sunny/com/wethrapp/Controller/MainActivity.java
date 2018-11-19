@@ -1,65 +1,79 @@
 package sunny.com.wethrapp.Controller;
 
+import android.content.Context;
 import android.content.Intent;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
+import android.widget.Toast;
 
 import sunny.com.wethrapp.R;
-import sunny.com.wethrapp.model.DB.entity.Time;
 import sunny.com.wethrapp.model.WeatherDatabase;
 
+/**
+ * This Activity serves as the welcome screen. It contains editTextViews for
+ * longitude, latitude and location name search.
+ *
+ */
 public class MainActivity extends AppCompatActivity {
 
     public WeatherDatabase weatherDatabase;
-    public TextView infoViewText;
+    private Context context;
     public Button buttonNextView;
-    public EditText inputTextX;
-    public EditText inputTextY;
+    public Button buttonLocationView;
+    public EditText longitud, latitude, searchParamView;
+    private static final String TAG = "LogAppTest";
 
-    private ResourceService resourceService;
-
+    /**
+     * This method will execute when the activity is created and recreated when screen-flip occurs.
+     * Before continuing to showforecastlistactivity it stores lat, long in the intent.
+     * Search edit text field is saved to intent for LocationListActivity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        weatherDatabase = WeatherDatabase.getInstance(getApplicationContext());
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Time time = new Time(55);
-                weatherDatabase.daoAccess().insertTimeInstance(time);
-                infoViewText = (TextView) findViewById(R.id.infoViewTime);
-                int time2 = weatherDatabase.daoAccess().fetchTimeById().getTime();
-                infoViewText.setText(String.valueOf(time2));
-            }
-        }).start();
+        context = getApplicationContext();
+        weatherDatabase = WeatherDatabase.getInstance(context);
 
-        inputTextX = findViewById(R.id.inputXCoordView);
-        inputTextY = findViewById(R.id.inputYCoordView);
+        longitud = findViewById(R.id.inputLonText);
+        latitude = findViewById(R.id.inputLatText);
+        searchParamView = findViewById(R.id.searchParamEditView);
 
+        buttonLocationView = findViewById(R.id.main_button_go_view);
         buttonNextView = findViewById(R.id.buttonNextView);
-        buttonNextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+
+        buttonNextView.setOnClickListener(view -> {
+            if(longitud.length() > 0 && latitude.length() > 0){
                 Intent intent = new Intent(getApplicationContext(), ShowForecastListActivity.class);
-                intent.putExtra("inputX", inputTextX.getText().toString());
-                intent.putExtra("inputY", inputTextY.getText().toString());
+                intent.putExtra("lon", longitud.getText().toString());
+                intent.putExtra("lat", latitude.getText().toString());
                 startActivity(intent);
+            } else {
+                Toast.makeText(context,"Coordinates error\nexample: 60.383, 14.333",
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
-
-
-
+        buttonLocationView.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), LocationListActivity.class);
+            intent.putExtra("searchParam", searchParamView.getText().toString());
+            startActivity(intent);
+        });
     }
 
-
+    @Override
+    protected void onDestroy() {
+        if(weatherDatabase != null){
+            weatherDatabase = null;
+        }
+        super.onDestroy();
+    }
 
 
 }

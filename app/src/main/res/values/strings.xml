@@ -7,4 +7,10 @@
     <string name="UpdateServiceText">Update</string>
     <string name="textDef">---</string>
     <string name="destroyServiceButtonTextView">end Service</string>
+    <string name="hintLat">Enter latitude</string>
+    <string name="hintLon">Enter longitude</string>
+    <string name="location_info_text">Or search for a place here</string>
+    <string name="main_hint_text">Enter location</string>
+    <string name="go_button">GO</string>
+    <string name="toast_coord_error_message">Please enter valid coordinates</string>
 </resources>

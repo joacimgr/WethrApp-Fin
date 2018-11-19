@@ -4,40 +4,51 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
-import sunny.com.wethrapp.model.DB.entity.CloudCoverage;
-import sunny.com.wethrapp.model.DB.entity.Temperature;
-import sunny.com.wethrapp.model.DB.entity.Time;
-import sunny.com.wethrapp.model.DB.entity.WeatherCategory;
+import java.util.List;
 
+import sunny.com.wethrapp.model.DB.entity.ForecastInstance;
+import sunny.com.wethrapp.model.DB.entity.Location;
+import sunny.com.wethrapp.model.DB.entity.TimeSeriesInstance;
+
+/**
+ * This class Contains the methods needed to access the application database.
+ *
+ */
 @Dao
 public interface DaoAccess {
-    @Insert
-    void insertTimeInstance (Time time);
 
     @Insert
-    void insertCloudCoverage(CloudCoverage cloudCoverage);
+    void insertFCInstance(ForecastInstance forecastInstance);
 
     @Insert
-    void insertTemperature (Temperature temperature);
-
-    @Query("SELECT * FROM temperature Where tempId = :tempId LIMIT 1")
-    Temperature fetchAllTemp(int tempId);
+    void insertAllTimeSeries(List<TimeSeriesInstance> timeSeriesInstances);
 
     @Insert
-    void insertWeatherCategory (WeatherCategory weatherCategory);
+    void insertOneTimeSeries(TimeSeriesInstance instance);
 
-    @Query("SELECT * FROM time LIMIT 1")
-    Time fetchTimeById();
+    @Insert
+    void insertAllLocations(List<Location> locations);
 
-    @Query("DELETE FROM temperature")
-    void nukeTableTemperature();
+    @Query("SELECT count(*) FROM forecast_table")
+    int containsRowsForecast();
 
-    @Query("DELETE FROM time")
-    void nukeTableTime();
+    @Query("SELECT * FROM forecast_table LIMIT 1")
+    ForecastInstance getForecast();
 
-    @Query("DELETE FROM cloudCoverage")
-    void nukeTableCloudCoverage();
+    @Query("SELECT * FROM timeseries_table")
+    List<TimeSeriesInstance> getAllTimeSeries();
 
-    @Query("DELETE FROM weatherCategory")
-    void nukeTableWeatherCategory();
+    @Query("SELECT * FROM location_table")
+    List<Location> getAllLocations();
+
+    @Query("DELETE FROM timeseries_table")
+    void deleteAllFromTimeseries();
+
+    @Query("DELETE FROM location_table")
+    void deAllFromLocations();
+
+    @Query("DELETE FROM forecast_table")
+    void deleteAllFromForecastTable();
+
+
 }
