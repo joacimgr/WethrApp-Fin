@@ -1,6 +1,7 @@
 package sunny.com.wethrapp.model.DB.entity;
 
 import android.arch.persistence.room.TypeConverter;
+import android.util.Log;
 
 import java.sql.Timestamp;
 import java.text.Format;
@@ -85,6 +86,7 @@ public class Converters {
     public static boolean isBeforeOneHour(long searchTime){
         Date now = new Date();
         if (now.getTime() - searchTime >= 60*60*1000) {
+            Log.d(TAG, String.valueOf((now.getTime() - searchTime)));
             return true;
         }
         return false;

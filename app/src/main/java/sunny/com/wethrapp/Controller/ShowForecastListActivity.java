@@ -121,46 +121,56 @@ public class ShowForecastListActivity extends AppCompatActivity {
         @Override
         protected List<TimeSeriesInstance> doInBackground(Void... voids) {
             boolean makeCall = true;
+            boolean isInRange = false;
             ConnectionType type;
             ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             type = ConnectionControl.getConnectionType(connMgr);
+            Log.d(TAG, type.toString());
+            int dbContainsForecast = forecastDao.containsRowsForecast();
+            if(dbContainsForecast > 0){
+                isInRange = CheckCoordInRange.isInRange(forecastDao.getForecast().getLongitude(), forecastDao.getForecast().getLongitude(), Double.parseDouble(lon), Double.parseDouble(lat));
+                Log.d(TAG, " isInRange: " + isInRange);
+            }
+
             if(type == ConnectionType.OFFLINE){
                 makeCall = false;
-                if(forecastDao.containsRowsForecast() > 0){
+                if(dbContainsForecast > 0 && isInRange){
                     publishProgress("NO CONNECTION\nForecasts might be outdated");
-                    forecastInstance = forecastDao.getForecast();
-                    timeSeriesInstancesList = forecastDao.getAllTimeSeries();
+                    getFromDb();
                 } else {
                     publishProgress("NO CONNECTION\nDatabase empty");
+                    return timeSeriesInstancesList;
                 }
             } else if(type == ConnectionType.MOBILE){
-                if(forecastDao.containsRowsForecast() > 0){
+                if(dbContainsForecast > 0 && isInRange){
                     if(isBeforeOneHour(forecastDao.getForecast().getTimestamp())){
-                        forecastDao.deleteAllFromForecastTable();
-                        forecastDao.deleteAllFromTimeseries();
-                        publishProgress("Fetching new information from SMHI\n");
+                        Log.d(TAG, "MOBILE IN RANGE BEFORE ONE HOUR");
+                        clearDb();
+                        publishProgress("Fetching new information from SMHI");
                     } else {
                         makeCall = false;
                         publishProgress("Fetching information from DB");
-                        forecastInstance = forecastDao.getForecast();
-                        timeSeriesInstancesList = forecastDao.getAllTimeSeries();
+                        getFromDb();
                     }
                 } else {
                     publishProgress("Fetching new information from SMHI");
                 }
             } else {
-                if(isBeforeTwentyMinutes(forecastDao.getForecast().getTimestamp())){
-                    publishProgress("Fetching new information from SMHI");
+                if(dbContainsForecast > 0 && isInRange) {
+                    if(isBeforeTwentyMinutes(forecastDao.getForecast().getTimestamp())){
+                        clearDb();
+                        publishProgress("Fetching new information from SMHI");
+                    } else {
+                        makeCall = false;
+                        getFromDb();
+                        publishProgress("Fetching information from local storage");
+                    }
                 } else {
-                    makeCall = false;
-                    forecastInstance = forecastDao.getForecast();
-                    timeSeriesInstancesList = forecastDao.getAllTimeSeries();
-                    publishProgress("Fetching information from local storage");
+                    publishProgress("Fetching new information from SMHI");
                 }
             }
             if(makeCall){
-                forecastDao.deleteAllFromForecastTable();
-                forecastDao.deleteAllFromTimeseries();
+                clearDb();
                 Log.d(TAG, "in async task Make Call - LAT: " + lat + " LON: " + lon);
                 HttpHandler httpHandler = new HttpHandler();
                 this.response = httpHandler.makeCall(lon, lat);
@@ -173,7 +183,16 @@ public class ShowForecastListActivity extends AppCompatActivity {
                 return extractDataFromJson();
             }
             return timeSeriesInstancesList;
+        }
 
+        private void clearDb(){
+            forecastDao.deleteAllFromForecastTable();
+            forecastDao.deleteAllFromTimeseries();
+        }
+
+        private void getFromDb(){
+            forecastInstance = forecastDao.getForecast();
+            timeSeriesInstancesList = forecastDao.getAllTimeSeries();
         }
 
         @Override
