@@ -1,26 +1,30 @@
 package sunny.com.wethrapp.Controller;
 
+
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.TextView;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
+
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+
 
 import sunny.com.wethrapp.Controller.parser.HttpHandler;
 import sunny.com.wethrapp.R;
 import sunny.com.wethrapp.Controller.parser.Response;
-import sunny.com.wethrapp.model.DB.entity.Converters;
 import sunny.com.wethrapp.model.DB.entity.ForecastInstance;
 import sunny.com.wethrapp.model.DB.entity.TimeSeriesInstance;
 import sunny.com.wethrapp.model.DaoAccess;
@@ -35,20 +39,39 @@ public class ShowForecastListActivity extends AppCompatActivity {
     private static String lon = null;
     private static String lat = null;
     protected RecyclerView recycler_view;
-    private static final String TAG = "LogAppTest";
+    private TextView searchParamView, dateTextView;
+    private String searchParam;
+    private static final String TAG = " LogAppTest";
+    private WeatherDatabase weatherDatabase;
+    private Context context;
 
+    @Override
+    protected void onDestroy() {
+        weatherDatabase.daoAccess().deleteAllFromTimeseries();
+        super.onDestroy();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_forecast_list);
         Bundle bundle = getIntent().getExtras();
+        context = getApplicationContext();
+        weatherDatabase = WeatherDatabase.getInstance(context);
 
         if (bundle != null) {
             lon = bundle.getString("lon");
             lat = bundle.getString("lat");
         }
-        Log.d("longlat", "val " + lon + " val2 " + lat);
+
+        Log.d(this.getClass().getSimpleName() + TAG, "val " + lon + " val2 " + lat);
+        StringBuffer sb = new StringBuffer();
+        sb.append("Place(lon, lat): ");
+        sb.append(lon);
+        sb.append(", ");
+        sb.append(lat);
+        searchParamView = findViewById(R.id.search_text);
+        searchParamView.setText(sb.toString());
 
         UpdateListAsynkTask workerThread = new UpdateListAsynkTask(lat, lon, WeatherDatabase.getInstance(getApplicationContext()).daoAccess());
         workerThread.execute();
@@ -56,12 +79,24 @@ public class ShowForecastListActivity extends AppCompatActivity {
         initElements();
     }
 
+
+
+    //https://stackoverflow.com/questions/7080051/checking-if-difference-between-2-date-is-more-than-20-minutes - time is a bitch
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private boolean isTimeForUpdate(Date date) {
+        boolean result = Minutes.minutesBetween(new DateTime(date), new DateTime())
+                .isGreaterThan(Minutes.minutes(20));
+        return result;
+    }
+
+
     private void initElements() {
         recycler_view = (RecyclerView) findViewById(R.id.recycle_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recycler_view.setLayoutManager(mLayoutManager);
         recycler_view.setItemAnimator(new DefaultItemAnimator());
         recycler_view.setHasFixedSize(true);
+        dateTextView = findViewById(R.id.approved_time);
     }
 
 
@@ -81,14 +116,6 @@ public class ShowForecastListActivity extends AppCompatActivity {
             this.timeSeriesInstance = new TimeSeriesInstance();
         }
 
-        public TimeSeriesInstance getTimeSeriesInstance() {
-            return timeSeriesInstance;
-        }
-
-        public ForecastInstance getForecastInstance() {
-            return forecastInstance;
-        }
-
         @Override
         protected List<TimeSeriesInstance> doInBackground(Void... voids) {
             Log.d(TAG, "in async task Make Call - LAT: " + lat + " LON: " + lon);
@@ -98,8 +125,12 @@ public class ShowForecastListActivity extends AppCompatActivity {
                 Log.d(TAG, "smhirepo - response not null");
             } else {
                 Log.d(TAG, "smhirepo - response null");
+                return new ArrayList<>();
             }
+            return extractDataFromJson();
+        }
 
+        private List<TimeSeriesInstance> extractDataFromJson(){
             try {
                 String name;
                 forecastInstance = new ForecastInstance();
@@ -122,11 +153,14 @@ public class ShowForecastListActivity extends AppCompatActivity {
                     //Add time of measure
                     Date dateFormat = null;
                     stringDate = response.getTimeSeries().get(i).getValidTime();
+                    Log.d(this.getClass().getSimpleName().toUpperCase() + " " + TAG, " dateReformatted: " + stringDate);
 
+                    //convert date value from string to Date format.
                     dateFormat = fromStringToDate(stringDate);
-
-                    Log.d(TAG, "\ndateformat in converting response to pojo" + dateFormat);
+                    //Log.d(this.getClass().getSimpleName().toUpperCase() + " " + TAG, " dateReformatted: " + dateFormat.toString());
                     timeSeriesInstance.setTimeForValues(dateFormat);
+
+                    // Iterate through response set and save relevant info to entities.
                     for (int j = 0; j < response.getTimeSeries().get(i).getParameters().size(); j++) {
                         parametersBean = response.getTimeSeries().get(i).getParameters().get(j);
                         name = response.getTimeSeries().get(i).getParameters().get(j).getName();
@@ -151,25 +185,22 @@ public class ShowForecastListActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<TimeSeriesInstance> ts) {
+            String date = String.valueOf(forecastInstance.getSearchTime());
+            String[] dateSplit = date.split(" ");
+            String[] timeSplit = dateSplit[3].split(":");
+            StringBuffer sb = new StringBuffer();
+            sb.append(dateSplit[2]);
+            sb.append(" ");
+            sb.append(dateSplit[1]);
+            sb.append(" ");
+            sb.append(timeSplit[0]);
+            sb.append(":");
+            sb.append(timeSplit[1]);
+            dateTextView.setText(sb.toString());
             ForecastAdaptor adaptor = new ForecastAdaptor(ts);
             timeSeriesInstancesList = ts;
             adaptor.setTimeSeriesInstanceList(ts);
             recycler_view.setAdapter(adaptor);
-
-        }
-        private Date convertStringToDate(String stringDate){
-            Date date = null;
-            stringDate = stringDate.replace("T", "-");
-            stringDate = stringDate.replace("Z", "-");
-            SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD-HH:mm", Locale.GERMAN);
-            Log.d(TAG, "String result: " + sdf);
-            try {
-                date = sdf.parse(stringDate);
-            } catch (ParseException e) {
-                Log.d(TAG, "Conversion error in ConvertStringToDate");
-                e.printStackTrace();
-            }
-            return date == null ? new Date() : date;
         }
     }
 }

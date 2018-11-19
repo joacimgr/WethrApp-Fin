@@ -1,15 +1,11 @@
 package sunny.com.wethrapp.model.DB.entity;
 
 import android.arch.persistence.room.TypeConverter;
-
-import android.os.Build;
 import android.util.Log;
 
-import java.time.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 
@@ -20,17 +16,17 @@ public class Converters {
     @TypeConverter
     public static Date fromStringToDate(String stringDate) {
         Date date = null;
-        stringDate = stringDate.replace("T", "-");
-        stringDate = stringDate.replace("Z", "-");
+        stringDate = stringDate.replace("T", " ");
+        stringDate = stringDate.replace("Z", " ");
 
-
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD-HH:mm:ss", Locale.GERMAN);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd H:mm:ss ", Locale.GERMAN);
         try {
             date = sdf.parse(stringDate);
         } catch (ParseException e) {
             Log.d(TAG, "Conversion error in ConvertStringToDate");
             e.printStackTrace();
         }
+        Log.d(TAG, " stringDate: " + date.toString());
         return date == null ? new Date() : date;
     }
 

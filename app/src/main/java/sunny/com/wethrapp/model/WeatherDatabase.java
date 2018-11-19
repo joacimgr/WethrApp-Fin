@@ -12,13 +12,15 @@ import android.support.annotation.NonNull;
 
 import java.util.Date;
 
+import sunny.com.wethrapp.Controller.parser.LocationResponse;
 import sunny.com.wethrapp.model.DB.entity.Converters;
 import sunny.com.wethrapp.model.DB.entity.ForecastInstance;
+import sunny.com.wethrapp.model.DB.entity.Location;
 import sunny.com.wethrapp.model.DB.entity.TimeSeriesInstance;
 
 import static sunny.com.wethrapp.model.DB.entity.Converters.fromStringToDate;
 
-@Database(entities = {ForecastInstance.class, TimeSeriesInstance.class}, version = 2, exportSchema = false)
+@Database(entities = {ForecastInstance.class, TimeSeriesInstance.class, Location.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class WeatherDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "WETHERDB.db";

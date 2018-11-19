@@ -1,11 +1,14 @@
 package sunny.com.wethrapp.Controller;
 
+import android.content.Context;
 import android.content.Intent;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
+import android.widget.Toast;
 
 import sunny.com.wethrapp.R;
 import sunny.com.wethrapp.model.WeatherDatabase;
@@ -13,27 +16,53 @@ import sunny.com.wethrapp.model.WeatherDatabase;
 public class MainActivity extends AppCompatActivity {
 
     public WeatherDatabase weatherDatabase;
+    private Context context;
     public Button buttonNextView;
-    public EditText longitud;
-    public EditText latitude;
+    public Button buttonLocationView;
+    public EditText longitud, latitude, searchParamView;
     private static final String TAG = "LogAppTest";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        weatherDatabase = WeatherDatabase.getInstance(getApplicationContext());
+
+        context = getApplicationContext();
+        weatherDatabase = WeatherDatabase.getInstance(context);
 
         longitud = findViewById(R.id.inputLonText);
         latitude = findViewById(R.id.inputLatText);
+        searchParamView = findViewById(R.id.searchParamEditView);
 
+        buttonLocationView = findViewById(R.id.main_button_go_view);
         buttonNextView = findViewById(R.id.buttonNextView);
+
         buttonNextView.setOnClickListener(view -> {
-            Intent intent = new Intent(getApplicationContext(), ShowForecastListActivity.class);
-            intent.putExtra("lon", longitud.getText().toString());
-            intent.putExtra("lat", latitude.getText().toString());
+            if(longitud.length() > 0 && latitude.length() > 0){
+                Intent intent = new Intent(getApplicationContext(), ShowForecastListActivity.class);
+                intent.putExtra("lon", longitud.getText().toString());
+                intent.putExtra("lat", latitude.getText().toString());
+                startActivity(intent);
+            } else {
+                Toast.makeText(context,"Coordinates error\nexample: 60.383, 14.333",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        buttonLocationView.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), LocationListActivity.class);
+            intent.putExtra("searchParam", searchParamView.getText().toString());
             startActivity(intent);
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        weatherDatabase.daoAccess().deleteAllFromTimeseries();
+        if(weatherDatabase != null){
+            weatherDatabase = null;
+        }
+        super.onDestroy();
     }
 
 

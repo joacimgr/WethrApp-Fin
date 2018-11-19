@@ -3,7 +3,7 @@ package sunny.com.wethrapp.Controller.parser;
 import java.util.List;
 
 
-public class Location {
+public class LocationResponse {
 
     private int geonameid;
     private String place;

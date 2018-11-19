@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 import sunny.com.wethrapp.R;
@@ -15,6 +15,20 @@ import sunny.com.wethrapp.model.DB.entity.TimeSeriesInstance;
 
 
 public class ForecastAdaptor extends RecyclerView.Adapter<ForecastAdaptor.ForecastHolder> {
+
+    class ForecastHolder extends RecyclerView.ViewHolder{
+        private TextView textViewDate;
+        private TextView textViewCloudCoverage;
+        private TextView textViewTemperature;
+
+        public ForecastHolder(@NonNull View itemView) {
+            super(itemView);
+            textViewDate = itemView.findViewById(R.id.item_date);
+            textViewCloudCoverage = itemView.findViewById(R.id.item_cloud_coverage);
+            textViewTemperature = itemView.findViewById(R.id.item_temperature);
+        }
+    }
+
     private static final String TAG = "LogAppTest";
     private List<TimeSeriesInstance> timeSeriesInstanceList;
 
@@ -37,8 +51,6 @@ public class ForecastAdaptor extends RecyclerView.Adapter<ForecastAdaptor.Foreca
         String[] dateSplit = date.split(" ");
         String[] timeSplit = dateSplit[3].split(":");
         StringBuffer sb = new StringBuffer();
-        sb.append(dateSplit[0]);
-        sb.append(" ");
         sb.append(dateSplit[2]);
         sb.append(" ");
         sb.append(dateSplit[1]);
@@ -61,16 +73,5 @@ public class ForecastAdaptor extends RecyclerView.Adapter<ForecastAdaptor.Foreca
         this.timeSeriesInstanceList = timeSeriesInstanceList;
     }
 
-    class ForecastHolder extends RecyclerView.ViewHolder{
-        private TextView textViewDate;
-        private TextView textViewCloudCoverage;
-        private TextView textViewTemperature;
 
-        public ForecastHolder(@NonNull View itemView) {
-            super(itemView);
-            textViewDate = itemView.findViewById(R.id.item_date);
-            textViewCloudCoverage = itemView.findViewById(R.id.item_cloud_coverage);
-            textViewTemperature = itemView.findViewById(R.id.item_temperature);
-        }
-    }
 }

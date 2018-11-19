@@ -10,10 +10,10 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:outlineAmbientShadowColor="@color/colorPrimary">
         <TextView
             android:id="@+id/item_temperature"
-            android:textAlignment="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toStartOf="@+id/item_celcius"
@@ -24,7 +24,7 @@
             android:includeFontPadding="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2018-11-11T14:00"
+            android:text="2018-11-11 14:00"
             android:maxLines="1"
             android:layout_alignParentStart="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
