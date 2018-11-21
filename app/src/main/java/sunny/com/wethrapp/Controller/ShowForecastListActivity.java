@@ -76,11 +76,15 @@ public class ShowForecastListActivity extends AppCompatActivity {
         searchParamView = findViewById(R.id.search_text);
         searchParamView.setText(sb.toString());
 
+        initElements();
+    }
 
+
+    @Override
+    protected void onStart() {
         UpdateListAsynkTask workerThread = new UpdateListAsynkTask(lat, lon, WeatherDatabase.getInstance(getApplicationContext()).daoAccess(), context);
         workerThread.execute();
-
-        initElements();
+        super.onStart();
     }
 
 
@@ -154,31 +158,31 @@ public class ShowForecastListActivity extends AppCompatActivity {
                     if (isBeforeOneHour(forecastDao.getForecast().getTimestamp())) {
                         Log.d(TAG, "MOBILE IN RANGE BEFORE ONE HOUR");
                         clearDb();
-                        publishProgress("Fetching new information from SMHI");
+                        publishProgress("trying to fetch new information from SMHI");
                     } else {
                         makeCall = false;
                         publishProgress("Fetching information from DB");
                         getFromDb();
                     }
                 } else {
-                    publishProgress("Fetching new information from SMHI");
+                    publishProgress("trying to fetch new information from SMHI");
                 }
             } else {
-                if (dbContainsForecast > 0 && isInRange) {
-                    if (isBeforeTwentyMinutes(forecastDao.getForecast().getTimestamp())) {
-                        clearDb();
+                if(dbContainsForecast > 0 && isInRange){
+                    if(isBeforeTwentyMinutes(forecastDao.getForecast().getTimestamp())){
                         publishProgress("Fetching new information from SMHI");
                     } else {
                         makeCall = false;
-                        getFromDb();
+                        forecastInstance = forecastDao.getForecast();
+                        timeSeriesInstancesList = forecastDao.getAllTimeSeries();
                         publishProgress("Fetching information from local storage");
                     }
                 } else {
-                    clearDb();
-                    publishProgress("Fetching new information from SMHI");
+                    publishProgress("trying to fetch new information from SMHI");
                 }
             }
             if (makeCall) {
+                publishProgress("trying to fetch new information from SMHI");
                 clearDb();
                 Log.d(TAG, "in async task Make Call - LAT: " + lat + " LON: " + lon);
                 HttpHandler httpHandler = new HttpHandler();
@@ -269,9 +273,17 @@ public class ShowForecastListActivity extends AppCompatActivity {
          */
         @Override
         protected void onPostExecute(List<TimeSeriesInstance> ts) {
-            Date date = new Date(forecastInstance.getTimestamp());
-            String dateText = dateToStringPresentable(date);
-            dateTextView.setText(dateText);
+            if(ts.size() == 0){
+                if(forecastDao.containsRowsForecast() > 0){
+                    timeSeriesInstancesList = forecastDao.getAllTimeSeries();
+                    Toast.makeText(context, "Forecasts might be outdated\nAnd not for the coordinates entered", Toast.LENGTH_LONG);
+                }
+                dateTextView.setText("No Searchresults found\n");
+            } else {
+                Date date = new Date(forecastInstance.getTimestamp());
+                String dateText = dateToStringPresentable(date);
+                dateTextView.setText(dateText);
+            }
             ForecastAdaptor adaptor = new ForecastAdaptor(ts);
             timeSeriesInstancesList = ts;
             adaptor.setTimeSeriesInstanceList(ts);
