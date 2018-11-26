@@ -8,6 +8,8 @@
 
     <Button
         android:id="@+id/buttonNextView"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_gravity="center_vertical|center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
@@ -29,7 +31,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonNextView" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonNextView" tools:targetApi="o"/>
 
     <EditText
         android:id="@+id/inputLatText"
@@ -43,7 +45,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputLonText" />
+        app:layout_constraintTop_toBottomOf="@+id/inputLonText" tools:targetApi="o"/>
 
     <TextView
         android:id="@+id/hintTextView"
@@ -71,20 +73,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hintTextView"
-        app:layout_constraintVertical_bias="0.509" />
+        app:layout_constraintVertical_bias="0.509" tools:targetApi="o"/>
 
     <Button
         android:id="@+id/main_button_go_view"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:layout_width="48dp"
-        android:layout_height="41dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/go_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.125"
-        app:layout_constraintStart_toEndOf="@+id/searchParamEditView" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/searchParamEditView"/>
 
 </android.support.constraint.ConstraintLayout>

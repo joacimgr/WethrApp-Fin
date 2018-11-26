@@ -14,6 +14,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +43,7 @@ public class ShowForecastListActivity extends AppCompatActivity {
     protected List<TimeSeriesInstance> timeSeriesInstancesList;
     private static String lon = null;
     private static String lat = null;
+    private static String place = null;
     protected RecyclerView recycler_view;
     private TextView searchParamView, dateTextView;
     private String searchParam;
@@ -75,6 +77,7 @@ public class ShowForecastListActivity extends AppCompatActivity {
         sb.append(lat);
         searchParamView = findViewById(R.id.search_text);
         searchParamView.setText(sb.toString());
+
 
 
         UpdateListAsynkTask workerThread = new UpdateListAsynkTask(lat, lon, WeatherDatabase.getInstance(getApplicationContext()).daoAccess(), context);
@@ -139,7 +142,7 @@ public class ShowForecastListActivity extends AppCompatActivity {
                 isInRange = CheckCoordInRange.isInRange(
                         forecastDao.getForecast().getLongitude(),
                         forecastDao.getForecast().getLatitude(),
-                        Double.parseDouble(lon),
+                        Double.parseDouble(lat),
                         Double.parseDouble(lat));
                 Log.d(TAG, " isInRange: " + isInRange);
             }

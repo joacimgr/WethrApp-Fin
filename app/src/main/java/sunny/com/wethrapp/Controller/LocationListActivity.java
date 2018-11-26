@@ -1,6 +1,7 @@
 package sunny.com.wethrapp.Controller;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -11,8 +12,13 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import sunny.com.wethrapp.Controller.parser.HttpHandler;
 import sunny.com.wethrapp.Controller.parser.LocationResponse;
@@ -21,8 +27,9 @@ import sunny.com.wethrapp.model.DB.entity.Location;
 import sunny.com.wethrapp.model.DaoAccess;
 import sunny.com.wethrapp.model.WeatherDatabase;
 import sunny.com.wethrapp.view.LocationAdaptor;
+import sunny.com.wethrapp.view.OnItemClickLocationListener;
 
-public class LocationListActivity extends AppCompatActivity {
+public class LocationListActivity extends AppCompatActivity  {
 
     public WeatherDatabase weatherDatabase;
 
@@ -38,6 +45,7 @@ public class LocationListActivity extends AppCompatActivity {
     private static final String TAG = "LogAppTest";
     protected RecyclerView recyclerView;
     protected List<Location> locationList;
+    protected OnItemClickLocationListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +82,8 @@ public class LocationListActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(false);
     }
+
+
 
     /**
      * ASYNC TASK - updates result-list of locations from smhi
@@ -113,14 +123,27 @@ public class LocationListActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<Location> locations) {
-            LocationAdaptor adaptor = new LocationAdaptor(locations);
+            OnItemClickLocationListener listener = (view, position) -> {
+                Intent intent = new Intent(getApplicationContext(), ShowForecastListActivity.class);
+                NumberFormat nf = DecimalFormat.getInstance(Locale.GERMAN);
+                DecimalFormat df = (DecimalFormat)nf;
+                DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.GERMAN);
+                symbols.setDecimalSeparator('.');
+                symbols.setGroupingSeparator(',');
+                df.setDecimalFormatSymbols(symbols);
+                df.setMinimumFractionDigits(0);
+                df.setMaximumFractionDigits(3);
+                df.setRoundingMode(RoundingMode.DOWN);
+                String slon = df.format((locations.get(position).getLon()));
+                String slat = df.format((locations.get(position).getLat()));
+                intent.putExtra("lon", slon);
+                intent.putExtra("lat", slat);
+                startActivity(intent);
+            };
+            LocationAdaptor adaptor = new LocationAdaptor(locations, listener);
             adaptor.setLocationList(locations);
             this.locations = locations;
             recyclerView.setAdapter(adaptor);
-
-
-
-
         }
 
         @Override
