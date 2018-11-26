@@ -13,6 +13,8 @@ import android.widget.Toast;
 import sunny.com.wethrapp.R;
 import sunny.com.wethrapp.model.WeatherDatabase;
 
+import static sunny.com.wethrapp.Controller.CheckCoordInRange.isCorrectSize;
+
 /**
  * This Activity serves as the welcome screen. It contains editTextViews for
  * longitude, latitude and location name search.
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         buttonNextView = findViewById(R.id.buttonNextView);
 
         buttonNextView.setOnClickListener(view -> {
-            if(longitud.length() > 0 && latitude.length() > 0){
+            if(isCorrectSize(longitud.getText().toString(), latitude.getText().toString())){
                 Intent intent = new Intent(getApplicationContext(), ShowForecastListActivity.class);
                 intent.putExtra("lon", longitud.getText().toString());
                 intent.putExtra("lat", latitude.getText().toString());
