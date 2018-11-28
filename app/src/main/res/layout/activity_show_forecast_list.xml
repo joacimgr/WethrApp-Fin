@@ -5,6 +5,7 @@
     android:id="@+id/showForecastView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     tools:context=".Controller.ShowForecastListActivity">
     <TextView
         android:id="@+id/approved_time"
@@ -12,6 +13,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:textAlignment="textEnd"
+        android:textColor="@android:color/white"
         android:text="2011-11-1 11:11"
         />
     <TextView
@@ -21,6 +23,7 @@
         android:layout_marginEnd="8dp"
         android:text="placeholder"
         android:textAlignment="textEnd"
+        android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycle_view"
