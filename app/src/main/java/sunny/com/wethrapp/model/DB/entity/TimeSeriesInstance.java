@@ -20,7 +20,6 @@ public class TimeSeriesInstance {
     @PrimaryKey(autoGenerate = true)
     private int instance_id;
 
-
     @ColumnInfo(name = "time")
     private long timeForValues;
 
@@ -29,6 +28,11 @@ public class TimeSeriesInstance {
 
     @ColumnInfo(name = "cloud_coverage")
     private double cloudCoverage;
+
+
+
+    @ColumnInfo(name = "symb")
+    private int  wsymb;
 
     public int getInstance_id() {
         return instance_id;
@@ -54,10 +58,11 @@ public class TimeSeriesInstance {
     }
 
     @Ignore
-    public TimeSeriesInstance(long timeForValues, double temperature, double cloudCoverage) {
+    public TimeSeriesInstance(long timeForValues, double temperature, double cloudCoverage, int wsymb) {
         this.timeForValues = timeForValues;
         this.temperature = temperature;
         this.cloudCoverage = cloudCoverage;
+        this.wsymb = wsymb;
     }
 
     public void setTemperature(double temperature) {
@@ -72,5 +77,11 @@ public class TimeSeriesInstance {
         this.cloudCoverage = cloudCoverage;
     }
 
+    public int getWsymb() {
+        return wsymb;
+    }
 
+    public void setWsymb(int wsymb) {
+        this.wsymb = wsymb;
+    }
 }

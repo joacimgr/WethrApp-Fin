@@ -64,9 +64,9 @@ public abstract class WeatherDatabase extends RoomDatabase {
         protected Void doInBackground(Void... voids) {
             Log.d("INIT DATABASE ", "VOID");
             forecastDao.insertFCInstance(new ForecastInstance(stringToTimestamp("2018-11-17T14:00Z"), 60.383, stringToTimestamp("2018-11-17T14:00Z"), 14.333));
-            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(stringToTimestamp("2018-11-17T14:00Z"), 22.1, 5));
-            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(stringToTimestamp("2018-11-17T15:00Z"), 15, 2));
-            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(stringToTimestamp("2018-11-17T17:00Z"), 16, 1));
+            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(stringToTimestamp("2018-11-17T14:00Z"), 22.1, 5, 1));
+            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(stringToTimestamp("2018-11-17T15:00Z"), 15, 2,1));
+            forecastDao.insertOneTimeSeries(new TimeSeriesInstance(stringToTimestamp("2018-11-17T17:00Z"), 16, 1,2));
             return null;
         }
     }

@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -88,7 +89,7 @@ public class LocationListActivity extends AppCompatActivity  {
     /**
      * ASYNC TASK - updates result-list of locations from smhi
      */
-    public class UpdateLocationListAsyncTask extends AsyncTask<Void, Void, List<Location>> {
+    public class UpdateLocationListAsyncTask extends AsyncTask<Void, String, List<Location>> {
 
         private DaoAccess daoAccess;
         private String searchParamPlace;
@@ -107,18 +108,27 @@ public class LocationListActivity extends AppCompatActivity  {
 
             HttpHandler httpHandler = new HttpHandler();
             this.locationResponse = httpHandler.makeCallLocation(searchParamPlace);
-            for (LocationResponse l : locationResponse){
-                Location newLP = new Location();
-                newLP.setGeonameid(l.getGeonameid());
-                newLP.setLat(l.getLat());
-                newLP.setLon(l.getLon());
-                newLP.setMunicipality(l.getMunicipality());
-                newLP.setPlace(l.getPlace());
-                locations.add(newLP);
+            if(locationResponse != null){
+                publishProgress("Loading...");
+                for (LocationResponse l : locationResponse){
+                    Location newLP = new Location();
+                    newLP.setGeonameid(l.getGeonameid());
+                    newLP.setLat(l.getLat());
+                    newLP.setLon(l.getLon());
+                    newLP.setMunicipality(l.getMunicipality());
+                    newLP.setPlace(l.getPlace());
+                    locations.add(newLP);
+                }
+                daoAccess.insertAllLocations(locations);
+                return locations;
             }
-            daoAccess.insertAllLocations(locations);
+            publishProgress("No matching locations\nSorry Sir/M'am!");
+            return new ArrayList<>();
+        }
 
-            return locations;
+        @Override
+        protected void onProgressUpdate(String... values) {
+            Toast.makeText(getApplicationContext(), values[0], Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -136,8 +146,10 @@ public class LocationListActivity extends AppCompatActivity  {
                 df.setRoundingMode(RoundingMode.DOWN);
                 String slon = df.format((locations.get(position).getLon()));
                 String slat = df.format((locations.get(position).getLat()));
+                String place = locations.get(position).getPlace();
                 intent.putExtra("lon", slon);
                 intent.putExtra("lat", slat);
+                intent.putExtra("place", place);
                 startActivity(intent);
             };
             LocationAdaptor adaptor = new LocationAdaptor(locations, listener);

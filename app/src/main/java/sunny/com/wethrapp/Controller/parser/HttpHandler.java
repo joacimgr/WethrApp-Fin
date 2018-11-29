@@ -80,8 +80,9 @@ public class HttpHandler {
 
             Type collectionType = new TypeToken<List<LocationResponse>>(){}.getType();
             List<LocationResponse> response = (List<LocationResponse>) new Gson().fromJson( in , collectionType);
-            Log.d(TAG, "makeCallLocation result: " + response.get(0).getPlace());
-            return response;
+            if(response != null){
+                return response;
+            }
         } catch (MalformedURLException e) {
             Log.d(TAG, "Make call http URL");
             e.printStackTrace();

@@ -77,10 +77,10 @@ public class ForecastAdaptor extends RecyclerView.Adapter<ForecastAdaptor.Foreca
         String hoursString = present.split("  ")[1].split(":")[0];
         hoursString = hoursString.substring(1,3);
         Integer hoursInteger = Integer.parseInt(hoursString);
-        int cc = (int)currentForecast.getCloudCoverage();
+        int cc = currentForecast.getWsymb();
         Log.d(TAG, "time1: " + hoursString + " integer: " + hoursInteger.toString());
         Log.d(TAG, "cc: " + cc );
-        if(hoursInteger > 7 || hoursInteger < 20){
+        if(hoursInteger > 7 && hoursInteger < 20){
             switch (cc){
                 case 1: holder.cloudIconView.setImageResource( R.mipmap.d1); break;
                 case 2: holder.cloudIconView.setImageResource( R.mipmap.d2); break;
@@ -109,6 +109,7 @@ public class ForecastAdaptor extends RecyclerView.Adapter<ForecastAdaptor.Foreca
                 case 25: holder.cloudIconView.setImageResource( R.mipmap.d25); break;
                 case 26: holder.cloudIconView.setImageResource( R.mipmap.d26); break;
                 case 27: holder.cloudIconView.setImageResource( R.mipmap.d27); break;
+                default: holder.cloudIconView.setImageResource( R.mipmap.d1); break;
             }
         } else {
             switch (hoursInteger){

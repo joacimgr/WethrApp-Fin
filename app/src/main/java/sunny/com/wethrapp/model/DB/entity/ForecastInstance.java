@@ -34,6 +34,8 @@ public class ForecastInstance {
     @ColumnInfo(name = "timestamp")
     private long timestamp;
 
+
+
     public long getTimestamp() {
         return timestamp;
     }

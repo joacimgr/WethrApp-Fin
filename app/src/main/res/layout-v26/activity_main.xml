@@ -4,74 +4,71 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Controller.MainActivity">
+    tools:context=".Controller.MainActivity"
+    android:background="@mipmap/wallpapersize">
 
     <Button
         android:id="@+id/buttonNextView"
-        android:layout_gravity="center_horizontal"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:text="@string/buttonNextTextView"
-        app:layout_constraintBottom_toTopOf="@+id/inputLonText"
-        />
+        android:layout_width="75dp"
+        android:layout_height="39dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/go_button"
+        app:layout_constraintBottom_toBottomOf="@+id/inputLatText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputLonText" />
 
     <EditText
         android:id="@+id/inputLonText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="240dp"
         android:autofillHints=""
         android:ems="10"
         android:hint="@string/hintLon"
         android:inputType="numberDecimal"
+        android:textColor="@color/colorAccent"
+        android:textColorHint="@color/colorAccentDark"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.479"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonNextView" />
+        app:layout_constraintTop_toBottomOf="@+id/searchParamEditView"
+        tools:targetApi="o" />
 
     <EditText
         android:id="@+id/inputLatText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:autofillHints=""
         android:ems="10"
         android:hint="@string/hintLat"
         android:inputType="numberDecimal"
+        android:textColor="@color/colorAccent"
+        android:textColorHint="@color/colorAccentDark"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.479"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputLonText" />
-
-    <TextView
-        android:id="@+id/hintTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="156dp"
-        android:text="@string/location_info_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputLatText" />
+        app:layout_constraintTop_toBottomOf="@+id/inputLonText"
+        tools:targetApi="o" />
 
     <EditText
         android:id="@+id/searchParamEditView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:ems="10"
+        android:layout_marginStart="32dp"
         android:autofillHints=""
+        android:ems="10"
         android:hint="@string/main_hint_text"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/colorAccent"
+        android:textColorHint="@color/colorAccentDark"
+        app:layout_constraintBaseline_toBaselineOf="@+id/main_button_go_view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hintTextView"
-        app:layout_constraintVertical_bias="0.509" />
+        tools:targetApi="o" />
 
     <Button
         android:id="@+id/main_button_go_view"
@@ -79,10 +76,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="44dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:text="@string/go_button"
-        app:layout_constraintBaseline_toBaselineOf="@+id/searchParamEditView"
-        app:layout_constraintLeft_toRightOf="@+id/searchParamEditView"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/searchParamEditView"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

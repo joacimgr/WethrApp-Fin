@@ -51,6 +51,7 @@ public class ShowForecastListActivity extends AppCompatActivity {
     private WeatherDatabase weatherDatabase;
     private Context context;
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -63,21 +64,25 @@ public class ShowForecastListActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         context = getApplicationContext();
         weatherDatabase = WeatherDatabase.getInstance(context);
+        String place = "";
 
         if (bundle != null) {
             lon = bundle.getString("lon");
             lat = bundle.getString("lat");
+            place = bundle.getString("place");
         }
 
         Log.d(this.getClass().getSimpleName() + TAG, "val " + lon + " val2 " + lat);
         StringBuffer sb = new StringBuffer();
-        sb.append("Place(lon, lat): ");
+        sb.append("Place(lon, lat [location]): ");
         sb.append(lon);
         sb.append(", ");
         sb.append(lat);
         searchParamView = findViewById(R.id.search_text);
         searchParamView.setText(sb.toString());
-
+        if(place.length() > 0){
+            searchParamView.append(" " + place);
+        }
         initElements();
     }
 
@@ -253,6 +258,10 @@ public class ShowForecastListActivity extends AppCompatActivity {
                             timeSeriesInstance.setTemperature(parameters.getValues().get(0));
                         } else if (name.equals("tcc_mean")) { // cc
                             timeSeriesInstance.setCloudCoverage(parameters.getValues().get(0));
+                        }
+                        if(name.equals("Wsymb2")) {
+
+                            timeSeriesInstance.setWsymb(parameters.getValues().get(0).intValue());
                         }
                     }
                     timeSeriesInstances.add(timeSeriesInstance);
